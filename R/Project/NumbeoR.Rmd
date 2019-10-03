@@ -11,27 +11,276 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Project Description
 
-# Data import
 
+
+
+# Loading the required libraries
 ```{r}
-library("jsonlite")
 library("tidyverse")
+
+library(DBI)                           # for PostgreSQL
+library(RPostgreSQL)                   # for PostgreSQL
+
+library("jsonlite")                    # JSON files
 library("rjson")
 ```
 
 
+# Setup of the PostgreSQL database
+## Establishing conntection to PostgreSQL
+
 ```{r}
-json_data <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2017.json")
-#json_data
+pw ="[placceholder]"
+
+# loads the PostgreSQL driver
+drv <- dbDriver("PostgreSQL") 
+
+# creates a connection to the postgres database; "con" is used to connect to the database
+con <- dbConnect(drv, dbname = "NumbeoR",
+                 host = "localhost", port = 5432,
+                 user = "postgres", password = pw)
+
+# removes the password
+rm(pw)
+```
+## Creation of database
+Please create a database in PostgreSQL. Name it "NumbeoR".
+
+
+## Creation of tables
+```{sql connection=con, eval=FALSE}
+CREATE TABLE cost_of_living (
+    "Year" integer,                                   -- Year
+    "Country" text,                                   -- Country
+    "Cost of Living Index" numeric,                   -- Cost of Living Index
+    "Rent Index" numeric,                             -- Rent Index
+    "Cost of Living Plus Rent Index" numeric,   
+    "Groceries Index" numeric,                   
+    "Restaurant Price Index" numeric,                  
+    "Local Purchasing Power Index" numeric                        
+);
+
+CREATE TABLE crime (
+    "Year" integer,                                   -- Year
+    "Country" text,                                   -- Country
+    "Crime Index" numeric,              
+    "Safety Index" numeric
+);
+
+CREATE TABLE health_care (
+    "Year" integer,                                   -- Year
+    "Country" text,                                   -- Country
+    "Health Care Index" numeric,              
+    "Health CareExp. Index" numeric                        
+);
+
+CREATE TABLE pollution (
+    "Year" integer,                                   -- Year
+    "Country" text,                                   -- Country
+    "Pollution Index" numeric,              
+    "Exp Pollution Index" numeric                       
+);
+
+CREATE TABLE property_investment (
+    "Year" integer,                                   -- Year
+    "Country" text,                                   -- Country
+    "Price To Income Ratio" numeric,              
+    "Gross Rental Yield City Centre" numeric,                        
+    "Gross Rental Yield Outside of Centre" numeric,   
+    "Price To Rent Ratio City Centre" numeric,                   
+    "Price To Rent Ratio Outside Of City Centre" numeric,                  
+    "Mortgage As A Percentage Of Income" numeric,                   
+    "Affordability Index" numeric                      
+);
+
+CREATE TABLE traffic (
+    "Year" integer,                                   -- Year
+    "Country" text,                                   -- Country
+    "Traffic Index" numeric,              
+    "Time Index(in minutes)" numeric,                        
+    "Time Exp. Index" numeric,   
+    "Inefficiency Index" numeric,                   
+    "CO2 Emission Index" numeric                        
+);
+
+
+```
+
+
+
+
+# Data import
+
+Reading JSON files
+```{r}
+json_data_cost_of_living_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2017.json")
+json_data_cost_of_living_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2018.json")
+json_data_cost_of_living_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2019.json")
+
+json_data_crime_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2017.json")
+json_data_crime_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2018.json")
+json_data_crime_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2019.json")
+
+json_data_health_care_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2017.json")
+json_data_health_care_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2018.json")
+json_data_health_care_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2019.json")
+
+json_data_pollution_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2017.json")
+json_data_pollution_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2018.json")
+json_data_pollution_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2019.json")
+
+json_data_property_investment_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2017.json")
+json_data_property_investment_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2018.json")
+json_data_property_investment_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2019.json")
+
+json_data_traffic_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2017.json")
+json_data_traffic_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2018.json")
+json_data_traffic_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2019.json")
+
+```
+
+Transform JSON files to  dataframes 
+```{r}
+df_temp_cost_of_living_2017 <- do.call(rbind.data.frame, json_data_cost_of_living_2017)
+df_temp_cost_of_living_2018 <- do.call(rbind.data.frame, json_data_cost_of_living_2018)
+df_temp_cost_of_living_2019 <- do.call(rbind.data.frame, json_data_cost_of_living_2019)
+
+df_temp_crime_2017 <- do.call(rbind.data.frame, json_data_crime_2017)
+df_temp_crime_2018 <- do.call(rbind.data.frame, json_data_crime_2018)
+df_temp_crime_2019 <- do.call(rbind.data.frame, json_data_crime_2019)
+
+df_temp_health_care_2017 <- do.call(rbind.data.frame, json_data_health_care_2017)
+df_temp_health_care_2018 <- do.call(rbind.data.frame, json_data_health_care_2018)
+df_temp_health_care_2019 <- do.call(rbind.data.frame, json_data_health_care_2019)
+
+df_temp_pollution_2017 <- do.call(rbind.data.frame, json_data_pollution_2017)
+df_temp_pollution_2018 <- do.call(rbind.data.frame, json_data_pollution_2018)
+df_temp_pollution_2019 <- do.call(rbind.data.frame, json_data_pollution_2019)
+
+df_temp_property_investment_2017 <- do.call(rbind.data.frame, json_data_property_investment_2017)
+df_temp_property_investment_2018 <- do.call(rbind.data.frame, json_data_property_investment_2018)
+df_temp_property_investment_2019 <- do.call(rbind.data.frame, json_data_property_investment_2019)
+
+df_temp_traffic_2017 <- do.call(rbind.data.frame, json_data_traffic_2017)
+df_temp_traffic_2018 <- do.call(rbind.data.frame, json_data_traffic_2018)
+df_temp_traffic_2019 <- do.call(rbind.data.frame, json_data_traffic_2019)
+
+```
+
+Transpose dataframes
+```{r}
+df_cost_of_living_2017 <- as.data.frame(t(df_temp_cost_of_living_2017))
+df_cost_of_living_2018 <- as.data.frame(t(df_temp_cost_of_living_2018))
+df_cost_of_living_2019 <- as.data.frame(t(df_temp_cost_of_living_2019))
+
+df_crime_2017 <- as.data.frame(t(df_temp_crime_2017))
+df_crime_2018 <- as.data.frame(t(df_temp_crime_2018))
+df_crime_2019 <- as.data.frame(t(df_temp_crime_2019))
+
+df_health_care_2017 <- as.data.frame(t(df_temp_health_care_2017))
+df_health_care_2018 <- as.data.frame(t(df_temp_health_care_2018))
+df_health_care_2019 <- as.data.frame(t(df_temp_health_care_2019))
+
+df_pollution_2017 <- as.data.frame(t(df_temp_pollution_2017))
+df_pollution_2018 <- as.data.frame(t(df_temp_pollution_2018))
+df_pollution_2019 <- as.data.frame(t(df_temp_pollution_2019))
+
+df_property_investment_2017 <- as.data.frame(t(df_temp_property_investment_2017))
+df_property_investment_2018 <- as.data.frame(t(df_temp_property_investment_2018))
+df_property_investment_2019 <- as.data.frame(t(df_temp_property_investment_2019))
+
+df_traffic_2017 <- as.data.frame(t(df_temp_traffic_2017))
+df_traffic_2018 <- as.data.frame(t(df_temp_traffic_2018))
+df_traffic_2019 <- as.data.frame(t(df_temp_traffic_2019))
+
+```
+
+# Writing data into PostgreSQL
+
+```{r}
+dbWriteTable(con, "cost_of_living", 
+             value = df_cost_of_living_2017, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "cost_of_living", 
+             value = df_cost_of_living_2018, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "cost_of_living", 
+             value = df_cost_of_living_2019, append = TRUE, row.names = FALSE)
+
+dbWriteTable(con, "crime", 
+             value = df_crime_2017, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "crime", 
+             value = df_crime_2018, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "crime", 
+             value = df_crime_2019, append = TRUE, row.names = FALSE)
+
+dbWriteTable(con, "health_care", 
+             value = df_health_care_2017, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "health_care", 
+             value = df_health_care_2018, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "health_care", 
+             value = df_health_care_2019, append = TRUE, row.names = FALSE)
+
+dbWriteTable(con, "pollution", 
+             value = df_pollution_2017, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "pollution", 
+             value = df_pollution_2018, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "pollution", 
+             value = df_pollution_2019, append = TRUE, row.names = FALSE)
+
+dbWriteTable(con, "property_investment", 
+             value = df_property_investment_2017, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "property_investment", 
+             value = df_property_investment_2018, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "property_investment", 
+             value = df_property_investment_2019, append = TRUE, row.names = FALSE)
+
+dbWriteTable(con, "traffic", 
+             value = df_traffic_2017, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "traffic", 
+             value = df_traffic_2018, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "traffic", 
+             value = df_traffic_2019, append = TRUE, row.names = FALSE)
+```
+
+# Export Data From PostgreSQL
+
+## R code
+
+```{r}
+df_cost_of_living_postgres <- dbGetQuery(con, "SELECT * from cost_of_living")
+df_crime_postgres <- dbGetQuery(con, "SELECT * from crime")
+df_health_care_postgres <- dbGetQuery(con, "SELECT * from health_care")
+df_pollution_postgres <- dbGetQuery(con, "SELECT * from pollution")
+df_property_investment_postgres <- dbGetQuery(con, "SELECT * from property_investment")
+df_traffic_postgres <- dbGetQuery(con, "SELECT * from traffic")
 ```
 
 ```{r}
-df_temp <- do.call(rbind.data.frame, json_data)
 ```
+
 
 ```{r}
-df <- as.data.frame(t(df_temp))
-class(df)
 ```
 
 
+```{r}
+df_master <- full_join(full_join(full_join(full_join(full_join(df_cost_of_living_postgres, df_crime_postgres, by = c("Country", "Year")),df_health_care_postgres, by = c("Country", "Year")), df_pollution_postgres, by = c("Country", "Year")), df_property_investment_postgres, by = c("Country", "Year")), df_traffic_postgres, by = c("Country", "Year"))
+
+
+df_master
+```
+
+
+```{r}
+filter(df_master, Country=="Italy")
+```
+
+## SQL code
+
+
+# Data Preparation
+
+
+# Exploratory Data Analysis
+
+
+# 

@@ -2,15 +2,15 @@
 This file contains the R code
 
 Evaluation:
-Dataframe -> PostgreSQL
+	done: Dataframe -> PostgreSQL
 JSON -> PostgreSQL
 
-if necessary: JSON/Dataframe -> CSV -> PostgreSQL
+	not necessary: done -> if necessary: JSON/Dataframe -> CSV -> PostgreSQL
 
-Schleifen
+Schleifen:
 Einlesen in R
 Schreiben in PostgreSQL
 
 SQL code:
-DB erstellen
-6 Tabellen erzeugen (inkl. Definition der Datentypen)
+	done: DB erstellen
+	done: 6 Tabellen erzeugen (inkl. Definition der Datentypen)

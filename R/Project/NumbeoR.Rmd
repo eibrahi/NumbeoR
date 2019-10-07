@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Loading the required libraries
-```{r}
+```{r, message=FALSE}
 library("tidyverse")
 
 library(DBI)                           # for PostgreSQL
@@ -30,7 +30,7 @@ library("rjson")
 ## Establishing conntection to PostgreSQL
 
 ```{r}
-pw ="[placceholder]"
+pw ="[Placeholder]"
 
 # loads the PostgreSQL driver
 drv <- dbDriver("PostgreSQL") 
@@ -113,29 +113,29 @@ CREATE TABLE traffic (
 
 Reading JSON files
 ```{r}
-json_data_cost_of_living_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2017.json")
-json_data_cost_of_living_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2018.json")
-json_data_cost_of_living_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2019.json")
+json_data_cost_of_living_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/cost-of-living_2017.json")
+json_data_cost_of_living_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/cost-of-living_2018.json")
+json_data_cost_of_living_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/cost-of-living_2019.json")
 
-json_data_crime_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2017.json")
-json_data_crime_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2018.json")
-json_data_crime_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2019.json")
+json_data_crime_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crime_2017.json")
+json_data_crime_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crime_2018.json")
+json_data_crime_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crime_2019.json")
 
-json_data_health_care_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2017.json")
-json_data_health_care_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2018.json")
-json_data_health_care_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2019.json")
+json_data_health_care_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/health-care_2017.json")
+json_data_health_care_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/health-care_2018.json")
+json_data_health_care_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/health-care_2019.json")
 
-json_data_pollution_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2017.json")
-json_data_pollution_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2018.json")
-json_data_pollution_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2019.json")
+json_data_pollution_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/pollution_2017.json")
+json_data_pollution_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/pollution_2018.json")
+json_data_pollution_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/pollution_2019.json")
 
-json_data_property_investment_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2017.json")
-json_data_property_investment_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2018.json")
-json_data_property_investment_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2019.json")
+json_data_property_investment_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/property-investment_2017.json")
+json_data_property_investment_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/property-investment_2018.json")
+json_data_property_investment_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/property-investment_2019.json")
 
-json_data_traffic_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2017.json")
-json_data_traffic_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2018.json")
-json_data_traffic_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2019.json")
+json_data_traffic_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/traffic_2017.json")
+json_data_traffic_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/traffic_2018.json")
+json_data_traffic_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/traffic_2019.json")
 
 ```
 

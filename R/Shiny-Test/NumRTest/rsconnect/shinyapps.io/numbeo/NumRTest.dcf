@@ -1,0 +1,12 @@
+name: NumRTest
+title: NumRTest
+username:
+account: numbeo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1317661
+bundleId: 2490782
+url: https://numbeo.shinyapps.io/NumRTest/
+when: 1570793227.19774
+asMultiple: FALSE
+asStatic: FALSE

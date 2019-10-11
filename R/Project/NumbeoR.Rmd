@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Loading the required libraries
-```{r, message=FALSE}
+```{r}
 library("tidyverse")
 
 library(DBI)                           # for PostgreSQL
@@ -23,6 +23,8 @@ library(RPostgreSQL)                   # for PostgreSQL
 
 library("jsonlite")                    # JSON files
 library("rjson")
+
+library(plotly)                        # Visualisierungen
 ```
 
 
@@ -30,7 +32,7 @@ library("rjson")
 ## Establishing conntection to PostgreSQL
 
 ```{r}
-pw ="[Placeholder]"
+pw ="Placeholder"
 
 # loads the PostgreSQL driver
 drv <- dbDriver("PostgreSQL") 
@@ -113,29 +115,29 @@ CREATE TABLE traffic (
 
 Reading JSON files
 ```{r}
-json_data_cost_of_living_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/cost-of-living_2017.json")
-json_data_cost_of_living_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/cost-of-living_2018.json")
-json_data_cost_of_living_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/cost-of-living_2019.json")
+json_data_cost_of_living_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2017.json")
+json_data_cost_of_living_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2018.json")
+json_data_cost_of_living_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2019.json")
 
-json_data_crime_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crime_2017.json")
-json_data_crime_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crime_2018.json")
-json_data_crime_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crime_2019.json")
+json_data_crime_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2017.json")
+json_data_crime_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2018.json")
+json_data_crime_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2019.json")
 
-json_data_health_care_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/health-care_2017.json")
-json_data_health_care_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/health-care_2018.json")
-json_data_health_care_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/health-care_2019.json")
+json_data_health_care_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2017.json")
+json_data_health_care_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2018.json")
+json_data_health_care_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2019.json")
 
-json_data_pollution_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/pollution_2017.json")
-json_data_pollution_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/pollution_2018.json")
-json_data_pollution_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/pollution_2019.json")
+json_data_pollution_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2017.json")
+json_data_pollution_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2018.json")
+json_data_pollution_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2019.json")
 
-json_data_property_investment_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/property-investment_2017.json")
-json_data_property_investment_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/property-investment_2018.json")
-json_data_property_investment_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/property-investment_2019.json")
+json_data_property_investment_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2017.json")
+json_data_property_investment_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2018.json")
+json_data_property_investment_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2019.json")
 
-json_data_traffic_2017 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/traffic_2017.json")
-json_data_traffic_2018 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/traffic_2018.json")
-json_data_traffic_2019 <- fromJSON(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/traffic_2019.json")
+json_data_traffic_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2017.json")
+json_data_traffic_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2018.json")
+json_data_traffic_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2019.json")
 
 ```
 
@@ -277,10 +279,157 @@ filter(df_master, Country=="Italy")
 ## SQL code
 
 
-# Data Preparation
+# Data Understanding and Preparation
 
+
+Approach:
+
+* Detailed inspection of data and data structure
+* Selection of content to be used afterwards
+* Outlier detection with the help of descriptive statistics
+* Data cleansing (e.g. outlier, NaNs)
+* Final validation and verification of data set
+
+## Data inspection
+
+A summary of dataframe structure and data types can be illustrated with the glimpse function:
+```{r}
+glimpse(df_master)
+```
+
+Furthermore we would like to add the information in which continent the country is.
+
+First we import a table which includes a country continent mapping
+
+```{r}
+countryContinent <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/R/Project/countryContinent.csv",header=TRUE, sep=";")
+colnames(countryContinent) <- c("Country", "Continent")
+```
+
+Checking the data types we see that the data was defined as factors:
+```{r}
+glimpse(countryContinent)
+```
+
+Therefore we change the data types to characters. 
+```{r}
+countryContinent[] <- lapply(countryContinent, as.character)
+```
+
+```{r}
+glimpse(countryContinent)
+```
+
+Now we can join the continents to the master dataframe with the help of a left_join function:
+
+```{r}
+df_master_continent <- left_join(df_master,countryContinent, by="Country")
+```
+
+Checking the number of NA values shows that there are no ones:
+```{r}
+sum(is.na(df_master_continent["Continent"]))
+
+```
+
+```{r}
+df_master_continent[rowSums(is.na(df_master_continent["Continent"])) > 0,]
+```
+
+```{r}
+glimpse(df_master_continent)
+```
+
+
+
+
+## Data selection
+
+Selection of variables which are to be used lateron:
+
+```{r}
+df_analysis <- select(df_master_continent, Year, Country, 'Cost of Living Index', 'Rent Index',
+    'Local Purchasing Power Index', 'Gross Rental Yield City Centre',
+    'Gross Rental Yield Outside of Centre',
+    'Mortgage As A Percentage Of Income', 'Crime Index', 'Health Care Index',
+    'Pollution Index', 'Traffic Index', 'Time Index(in minutes)',
+    'CO2 Emission Index', Continent)
+
+
+```
+
+
+
+```{r}
+df_analysis
+
+```
+
+```{r}
+glimpse(df_analysis)
+```
+
+
+## Data Cleansing
+
+### Deletion of NA values
+
+Sum of NA values can be ascertained as following:
+```{r}
+sum(is.na(df_analysis))
+```
+
+The observations which contain at least one NA values can be identified with the following command:
+
+```{r}
+df_analysis[rowSums(is.na(df_analysis)) > 0,]
+```
+
+
+All rows containing NA values can be deleted with the na.omit function:
+
+```{r}
+df_analysis_clean <- na.omit(df_analysis)
+
+```
+
+Checking on how many NA values are in the new clean dataframe shows that there are none:
+
+```{r}
+sum(is.na(df_analysis_clean))
+```
+
+The new structure of the dataframe is:
+```{r}
+glimpse(df_analysis_clean)
+```
+
+
+
+```{r}
+df_analysis_clean_2019 <- filter(df_analysis_clean, Year == 2019)
+```
+
+
+```{r}
+crime_plot <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
+                         geom_boxplot()
+                     
+ggplotly(crime_plot)
+```
+
+
+
+
+
+```{r}
+
+```
 
 # Exploratory Data Analysis
 
 
-# 
+```{r}
+
+```
+

@@ -305,6 +305,14 @@ df_master <- full_join(full_join(full_join(full_join(full_join(df_cost_of_living
 df_master
 ```
 
+```{r}
+df_master <- distinct(df_master)
+
+```
+
+```{r}
+df_master
+```
 
 ---
 
@@ -470,24 +478,82 @@ df_analysis_clean_2019 <- filter(df_analysis_clean, Year == 2019)
 
 
 ```{r}
-crime_plot <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
+crime_plot_2019 <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
                          geom_boxplot()
                      
-ggplotly(crime_plot)
+ggplotly(crime_plot_2019)
 ```
 
 
+
+
+
+---
+
+
+```{r}
+crime_health_plot_2019 <- ggplot(df_analysis_clean_2019) +
+    geom_point(
+        mapping = aes(x = `Pollution Index`, y = `Cost of Living Index`,color= Continent, points=Country)
+        )
+
+ggplotly(crime_health_plot_2019)
+```
+
+
+---
+
+```{r}
+drops <- c("Year","Country", "Continent")
+df_master_numeric <- df_master_continent[ , !(names(df_master_continent) %in% drops)]
+df_master_numeric <- na.omit(df_master_numeric)
+```
+
+
+```{r}
+df_analysis_numeric <- select(df_master_numeric, 'Cost of Living Index', 'Rent Index',
+    'Local Purchasing Power Index', 'Gross Rental Yield City Centre',
+    'Gross Rental Yield Outside of Centre',
+    'Mortgage As A Percentage Of Income', 'Crime Index', 'Health Care Index',
+    'Pollution Index', 'Traffic Index', 'Time Index(in minutes)',
+    'CO2 Emission Index')
+
+```
+
+```{r}
+sum(is.na(df_analysis_numeric))
+```
+
+```{r}
+library(corrplot)
+corrplot(cor(df_analysis_numeric), method="color", outline="White")
+```
+
+
+```{r}
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(df_analysis_numeric, method="color", col=col(200),  
+         type="upper", order="hclust", 
+         addCoef.col = "black", # Add coefficient of correlation
+         tl.col="black", tl.srt=45, #Text label color and rotation
+         # Combine with significance
+         p.mat = p.mat, sig.level = 0.01, insig = "blank", 
+         # hide correlation coefficient on the principal diagonal
+         diag=FALSE 
+         )
+```
 
 
 
 ```{r}
-
+corrplot(df_analysis_numeric, method="number")
 ```
+
 
 # Exploratory Data Analysis
 
 
 ```{r}
-
+write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/R/Project/MasterDF.csv", row.names = FALSE)
 ```
 

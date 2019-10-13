@@ -26,15 +26,20 @@ class: center, middle
 # Loading of required libraries
 
 ```{r, message=FALSE}
-library("tidyverse")
+library(tidyverse)
 
 library(DBI)                           # for PostgreSQL
 library(RPostgreSQL)                   # for PostgreSQL
 
-library("jsonlite")                    # for handling of JSON files
-library("rjson")
+library(jsonlite)                      # handling of JSON files
+library(rjson)                         # handling of JSON files
 
-library(plotly)                        # for visualizations
+library(plotly)                        # visualizations
+
+library(corrplot)                      # visualizations of correlations
+
+library(Hmisc)                         # calculation of correlations
+
 ```
 
 ---
@@ -564,6 +569,8 @@ sum(is.na(df_master_continent["Continent"]))
 df_master_continent[rowSums(is.na(df_master_continent["Continent"])) > 0,]
 ```
 
+For every country one contintent could be assigened.
+
 ```{r}
 glimpse(df_master_continent)
 ```
@@ -653,8 +660,6 @@ ggplotly(crime_plot_2019)
 
 
 
-
-
 ---
 
 
@@ -692,14 +697,13 @@ sum(is.na(df_analysis_numeric))
 ```
 
 ```{r}
-library(corrplot)
 corrplot(cor(df_analysis_numeric), method="color", outline="White")
 ```
 
 
 ```{r}
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-corrplot(df_analysis_numeric, method="color", col=col(200),  
+corrplot(cor(df_analysis_numeric), method="color", col=col(200),  
          type="upper", order="hclust", 
          addCoef.col = "black", # Add coefficient of correlation
          tl.col="black", tl.srt=45, #Text label color and rotation
@@ -716,6 +720,7 @@ corrplot(df_analysis_numeric, method="color", col=col(200),
 corrplot(df_analysis_numeric, method="number")
 ```
 
+---
 
 # Exploratory Data Analysis
 
@@ -723,4 +728,39 @@ corrplot(df_analysis_numeric, method="number")
 ```{r}
 # write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
 ```
+
+
+---
+
+## Correlations
+
+---
+
+First, a correlation matix will be generated with the help of the corrplot package
+
+```{r}
+
+corrplot(cor(df_analysis_numeric), method = "circle", title = "Correlation matrix")
+```
+
+The Cost of Living Index is a dependent variable of the Rent Index and the Local Purchasing Power Index.
+
+But we see that the Pollution Index could be negatively correlated with the Local Purchasing Power Index and the Cost of Living Index. 
+The CO2 Emission Index could be positively correlated with Gross Rerntal Yields and Crime Index.  
+Furthermore, the Health Care Index seems to be positively correlated with the Local Purchasing Power Index. 
+This will be examined in the following
+
+--- 
+
+The function rcorr() [in Hmisc package] can be used to compute the significance levels (p-value) for pearson or spearman correlations. It returns both the correlation coefficients and the p-value of the correlation for all possible pairs of columns in the data table.
+
+Here, we show the correlation of two variables 
+```{r}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Cost of Living Index`)))
+corN
+```
+
+
+see http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
+
 

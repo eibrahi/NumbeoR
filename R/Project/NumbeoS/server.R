@@ -8,19 +8,32 @@
 #
 
 library(shiny)
+library(ggplot2)
+library(dplyr)
+
+
+df_master <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/MasterDF.csv", header=TRUE)
+df_master <- mutate(df_master, Year2=as.character(df_master$Year))
+glimpse(df_master)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
-    output$distPlot <- renderPlot({
 
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    output$numbPlot <- renderPlot({
+        test <- filter(df_master, Year==input$Year2)
+        ggplot(test) +
+            geom_point(mapping = aes(x=Crime.Index, y=Health.Care.Index, color=Continent, s=Country))
+        
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-
+    })
+    
+    output$numbPlot2 <- renderPlot({
+        test <- filter(df_master, Year==input$Year2)
+        ggplot(test) +
+            geom_point(mapping = aes(x=Crime.Index, y=Health.Care.Index, color=Continent, s=Country))
+        
+        
     })
 
 })

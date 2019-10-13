@@ -40,8 +40,15 @@ library(plotly)                        # Visualisierungen
 
 ## Establishing connection to PostgreSQL
 
+
 ```{r}
-pw ="HdM2019"
+configFile <- fromJSON(file="configFile.json")
+path <- configFile[1]
+```
+
+
+```{r}
+pw = configFile[2]
 
 # loads the PostgreSQL driver
 drv <- dbDriver("PostgreSQL") 
@@ -55,6 +62,7 @@ con <- dbConnect(drv, dbname = "NumbeoR",
 rm(pw)
 
 ```
+
 
 ---
 
@@ -358,7 +366,7 @@ Furthermore we would like to add the information in which continent the country 
 Therefore we import a table which includes a country continent mapping
 
 ```{r}
-countryContinent <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/countryContinent.csv",header=TRUE, sep=";")
+countryContinent <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/CountryContinent.csv",header=TRUE, sep=";")
 colnames(countryContinent) <- c("Country", "Continent")
 ```
 

@@ -358,7 +358,7 @@ Furthermore we would like to add the information in which continent the country 
 Therefore we import a table which includes a country continent mapping
 
 ```{r}
-countryContinent <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/R/Project/countryContinent.csv",header=TRUE, sep=";")
+countryContinent <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/countryContinent.csv",header=TRUE, sep=";")
 colnames(countryContinent) <- c("Country", "Continent")
 ```
 
@@ -554,6 +554,6 @@ corrplot(df_analysis_numeric, method="number")
 
 
 ```{r}
-write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/R/Project/MasterDF.csv", row.names = FALSE)
+# write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
 ```
 

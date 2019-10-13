@@ -42,6 +42,7 @@ library(plotly)                        # Visualisierungen
 
 
 ```{r}
+# load configfile
 configFile <- fromJSON(file="configFile.json")
 path <- configFile[1]
 ```

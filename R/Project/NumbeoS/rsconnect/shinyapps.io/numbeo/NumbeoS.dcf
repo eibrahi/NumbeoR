@@ -1,0 +1,12 @@
+name: NumbeoS
+title: NumbeoS
+username:
+account: numbeo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1322624
+bundleId: 2496121
+url: https://numbeo.shinyapps.io/NumbeoS/
+when: 1570963287.62496
+asMultiple: FALSE
+asStatic: FALSE

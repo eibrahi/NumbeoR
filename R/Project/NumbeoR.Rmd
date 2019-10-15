@@ -37,8 +37,12 @@ library(rjson)                         # handling of JSON files
 library(plotly)                        # visualizations
 
 library(corrplot)                      # visualizations of correlations
+library(GGally)                        # visualizations of correlations
 
 library(Hmisc)                         # calculation of correlations
+
+library(fpp3)                          # forecasting/times series
+
 
 ```
 
@@ -696,30 +700,6 @@ df_analysis_numeric <- select(df_master_numeric, 'Cost of Living Index', 'Rent I
 sum(is.na(df_analysis_numeric))
 ```
 
-```{r}
-corrplot(cor(df_analysis_numeric), method="color", outline="White")
-```
-
-
-```{r}
-col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-corrplot(cor(df_analysis_numeric), method="color", col=col(200),  
-         type="upper", order="hclust", 
-         addCoef.col = "black", # Add coefficient of correlation
-         tl.col="black", tl.srt=45, #Text label color and rotation
-         # Combine with significance
-         p.mat = p.mat, sig.level = 0.01, insig = "blank", 
-         # hide correlation coefficient on the principal diagonal
-         diag=FALSE 
-         )
-```
-
-
-
-```{r}
-corrplot(df_analysis_numeric, method="number")
-```
-
 ---
 
 # Exploratory Data Analysis
@@ -735,6 +715,7 @@ corrplot(df_analysis_numeric, method="number")
 ## Correlations
 
 ---
+### Correlation matrix
 
 First, a correlation matix will be generated with the help of the corrplot package
 
@@ -743,24 +724,304 @@ First, a correlation matix will be generated with the help of the corrplot packa
 corrplot(cor(df_analysis_numeric), method = "circle", title = "Correlation matrix")
 ```
 
-The Cost of Living Index is a dependent variable of the Rent Index and the Local Purchasing Power Index.
 
-But we see that the Pollution Index could be negatively correlated with the Local Purchasing Power Index and the Cost of Living Index. 
+
+
+The Cost of Living Index is a dependent variable of the Rent Index and the Local Purchasing Power Index. So further correlation analyses are not reasonable. 
+
+But we see that the Pollution Index could be negatively correlated with the Local Purchasing Power Index and with the Cost of Living Index. 
+
 The CO2 Emission Index could be positively correlated with Gross Rerntal Yields and Crime Index.  
+
 Furthermore, the Health Care Index seems to be positively correlated with the Local Purchasing Power Index. 
 This will be examined in the following
 
 --- 
 
+### Pollution vs. Local Purchasing Power
+
 The function rcorr() [in Hmisc package] can be used to compute the significance levels (p-value) for pearson or spearman correlations. It returns both the correlation coefficients and the p-value of the correlation for all possible pairs of columns in the data table.
 
-Here, we show the correlation of two variables 
+Here, we show the (negative) correlation of two variables Polltion Index and Local Purchasing Power Index:
 ```{r}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Cost of Living Index`)))
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Local Purchasing Power Index`)))
 corN
 ```
 
 
 see http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
 
+---
+
+### Pollution vs. Cost of Living
+
+Here, we show the (negative) correlation of two variables Polltion Index and Cost of Living Index:
+```{r}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Cost of Living Index`)))
+corN
+```
+
+---
+
+### CO2 Emission  vs. Gross Rental Yield
+
+Here, we show the (positive) correlation of variable CO2 Emission Index and the two indexes for Gross Rental Yields:
+```{r}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Gross Rental Yield City Centre`)))
+corN
+```
+
+```{r}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Gross Rental Yield Outside of Centre`)))
+corN
+```
+
+
+---
+
+### Health Care  vs. Local Purchasing Power
+
+The correlation of the two variables Health Care Index and the Local Purchasing Power:
+```{r}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Health Care Index`,`Local Purchasing Power Index`)))
+corN
+```
+
+---
+
+# Forecasting
+
+Time series analysis for crime rate in Germany
+
+see https://otexts.com/fpp3/
+see https://github.com/robjhyndman/fpp3-package
+
+---
+
+Main forecasting methods:
+
+
+---
+
+## Data Preparation
+
+---
+
+
+### Preparation Dataframe
+
+Filter dataframe only for Germany
+
+```{r}
+df_Germany <- filter(df_master, Country=="Germany")
+```
+
+
+---
+
+
+### Data transformation into vectors and time series   
+
+In order to be able to work with the partial data sets later, we split the respective dataframe into individual vectors for Crime Index and Year.
+
+
+```{r}
+crimeGermanyVector <- df_Germany[,9]
+crimeGermanyVector
+
+costOfLivingVector <- df_Germany[,3]
+costOfLivingVector
+
+healthCareVector <- df_Germany[,11]
+healthCareVector 
+
+pollutionVector <- df_Germany[,13]
+pollutionVector
+
+```
+
+
+```{r}
+class(crimeGermanyVector)
+```
+
+---
+
+Now we convert the vectors into times series.
+```{r}
+crimeGermanyTS <- ts(crimeGermanyVector, start=2012, end=2019, frequency=1)
+costOfLivingGermanyTS <- ts(costOfLivingVector, start=2012, end=2019, frequency=1)
+healthCareGermanyTS <- ts(healthCareVector, start=2012, end=2019, frequency=1)
+pollutionGermanyTS <- ts(pollutionVector, start=2012, end=2019, frequency=1)
+crimeGermanyTS
+class(crimeGermanyTS)
+```
+
+Converting the dataframe into a times series (dataframe is coerced to a numeric matrix)
+```{r}
+GermanyTS <- ts(df_Germany, start=2012, end=2019, frequency=1)
+GermanyTS
+```
+
+---
+
+### Plotting times series
+
+```{r}
+par(mfrow=c(2,2))
+plot(crimeGermanyTS, col="black", main="Crime Index Germany")
+plot(costOfLivingGermanyTS, col="red", main="Cost of Living Index Germany")
+plot(healthCareGermanyTS, col="orange", main="Health Care Index Germany")
+plot(pollutionGermanyTS, col="purple", main="Pollution Index Germany")
+
+```
+
+```{r, warning=FALSE}
+library(GGally)
+ggCorAnalysis <- select(df_analysis_numeric, `Health Care Index`,`Pollution Index`,`Crime Index`,`Cost of Living Index`)
+GGally::ggpairs(ggCorAnalysis)
+```
+
+---
+
+## Modelling
+
+---
+
+### Some simple forecasting methods
+
+---
+
+#### Average method
+
+The forecasted values are equal to the average (or “mean”) of the historical data. 
+h is the time horizon for the forecast.
+```{r}
+meanf(crimeGermanyTS, h=3)
+```
+
+
+---
+
+#### Naïve method (random walk forecasts)
+
+The last value of the historical data is set as predicted value. 
+h is the time horizon for the forecast.
+```{r}
+naive(crimeGermanyTS, h=3)
+```
+
+Variation: *Drift method*
+Change over time (=drift) is the average change in the historical data.
+```{r}
+driftCrime <- rwf(crimeGermanyTS, h=3, drift=TRUE)
+driftCrime
+
+```
+
+
+---
+#### Plotting the forecasts
+
+```{r}
+crimeGermanyPlot <- window(crimeGermanyTS,start=2012,end=2019)
+# Plot some forecasts
+autoplot(crimeGermanyPlot) +
+  autolayer(meanf(crimeGermanyPlot, h=3),
+    series="Mean", PI=FALSE) +
+  autolayer(naive(crimeGermanyPlot, h=3),
+    series="Naïve", PI=FALSE) +
+  autolayer(rwf(crimeGermanyTS, h=3, drift=TRUE),
+    series="Naïve Drift Method", PI=FALSE) +
+  ggtitle("Forecasts for Crime Index") +
+  xlab("Year") + ylab("Crime Index") +
+  guides(colour=guide_legend(title="Forecast"))
+```
+
+
+---
+
+#### Evaluating Forecast Accuracy
+
+For the three methods Mean, Naïve Method and Drift Method the Accuracy can be deducted from comparison of forecasts 2017-2019 and real data.
+
+```{r}
+crime1 <- meanf(window(crimeGermanyTS, start=2012, end=2016), h=3)
+crime2 <- rwf(window(crimeGermanyTS, start=2012, end=2016), h=3)
+crime3 <- rwf(window(crimeGermanyTS, start=2012, end=2016), drift=TRUE, h=3)
+autoplot(crimeGermanyPlot) +
+  autolayer(crime1, PI=FALSE, series="Mean") +
+  autolayer(crime2, PI=FALSE, series="Naïve") +
+  autolayer(crime3, PI=FALSE, series="Naïve Drift Method") +
+  xlab("Year") + ylab("Crime Index") +
+  ggtitle("Crime Index Germany") +
+  guides(colour=guide_legend(title="Forecast"))
+```
+
+
+---
+
+### Autocorrelation
+We measure the relationship between: 
+yt and yt-1
+yt and yt-2
+yt and yt-3
+etc.
+
+---
+```{r}
+lag.plot(crimeGermanyTS,lags=7,do.lines=FALSE)
+```
+The autocorrelations are the correlations associated with these scatterplots.
+
+---
+
+The autocorrelations coefficients are displayed by the autocorrelation function ggAcf function
+```{r}
+ggAcf(crimeGermanyTS)
+
+```
+
+The dashed blue lines (±2/√T where T is the length of the time, in our case ±0,76) indicate whether the correlations are significantly different from zero.
+In our case no correlation is significant. 
+Time series that show no autocorrelation are called *white noise*. 
+
+---
+### Non-seasonal ARIMA models
+
+```{r}
+
+```
+
+
+
+
+```{r}
+
+```
+
+
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
 

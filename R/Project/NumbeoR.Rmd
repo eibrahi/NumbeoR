@@ -58,14 +58,14 @@ class: center, middle
 ## Establishing connection to PostgreSQL
 
 
-```{r}
+```{r echo=TRUE}
 # load configfile
 configFile <- fromJSON(file="configFile.json")
 path <- configFile[1]
 ```
 
 
-```{r}
+```{r echo=TRUE}
 pw = configFile[2]
 
 # loads the PostgreSQL driver
@@ -91,9 +91,14 @@ A database with the name "NumbeoR" in PostgreSQL has to be created manually.
 
 ## Creation of tables
 
+```{sql connection=con}
+DROP Table cost_of_living, crime, health_care, pollution, property_investment, traffic
+```
+
+
 Six different tables need to be created:
 
-```{sql eval=FALSE, connection=con, include=FALSE}
+```{sql echo=TRUE, connection=con}
 CREATE TABLE cost_of_living (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
@@ -153,11 +158,14 @@ CREATE TABLE traffic (
 
 ---
 
+
 # Data import
+
+---
 
 Reading in the JSON files
 
-```{r eval=FALSE, include=FALSE}
+```{r echo=TRUE}
 # generate full path to the dataImport.json
 pathToJson <- paste0(path, "daten/dataImport.json")
 
@@ -200,6 +208,8 @@ for (i in 1 : length(my_files)) {
 ---
 
 # Export Data From PostgreSQL
+
+---
 
 There are different ways for exporting and further preparing data from PostgreSQL
 One could export with sQL codes

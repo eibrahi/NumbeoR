@@ -41,6 +41,8 @@ library(GGally)                        # visualizations of correlations
 
 library(Hmisc)                         # calculation of correlations
 
+library(fpp)                           # forecasting/times series
+library(fpp2)                          # forecasting/times series
 library(fpp3)                          # forecasting/times series
 
 
@@ -155,296 +157,45 @@ CREATE TABLE traffic (
 
 Reading in the JSON files
 
-```{r}
-json_data_cost_of_living_2012 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2012.json")
-json_data_cost_of_living_2013 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2013.json")
-json_data_cost_of_living_2014 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2014.json")
-json_data_cost_of_living_2015 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2015.json")
-json_data_cost_of_living_2016 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2016.json")
-json_data_cost_of_living_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2017.json")
-json_data_cost_of_living_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2018.json")
-json_data_cost_of_living_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/cost-of-living_2019.json")
+```{r eval=FALSE, include=FALSE}
+# generate full path to the dataImport.json
+pathToJson <- paste0(path, "daten/dataImport.json")
 
-json_data_crime_2012 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2012.json")
-json_data_crime_2013 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2013.json")
-json_data_crime_2014 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2014.json")
-json_data_crime_2015 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2015.json")
-json_data_crime_2016 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2016.json")
-json_data_crime_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2017.json")
-json_data_crime_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2018.json")
-json_data_crime_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crime_2019.json")
+# reeding the dataImport.json
+my_files <- fromJSON(file = pathToJson)
 
-json_data_health_care_2012 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2012.json")
-json_data_health_care_2013 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2013.json")
-json_data_health_care_2014 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2014.json")
-json_data_health_care_2015 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2015.json")
-json_data_health_care_2016 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2016.json")
-json_data_health_care_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2017.json")
-json_data_health_care_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2018.json")
-json_data_health_care_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/health-care_2019.json")
+# creating lists
+my_data <- list()
+df_temp_my_data <- list()
+df_my_data <- list()
 
-json_data_pollution_2012 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2012.json")
-json_data_pollution_2013 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2013.json")
-json_data_pollution_2014 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2014.json")
-json_data_pollution_2015 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2015.json")
-json_data_pollution_2016 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2016.json")
-json_data_pollution_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2017.json")
-json_data_pollution_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2018.json")
-json_data_pollution_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/pollution_2019.json")
-
-json_data_property_investment_2012 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2012.json")
-json_data_property_investment_2013 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2013.json")
-json_data_property_investment_2014 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2014.json")
-json_data_property_investment_2015 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2015.json")
-json_data_property_investment_2016 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2016.json")
-json_data_property_investment_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2017.json")
-json_data_property_investment_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2018.json")
-json_data_property_investment_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/property-investment_2019.json")
-
-json_data_traffic_2012 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2012.json")
-json_data_traffic_2013 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2013.json")
-json_data_traffic_2014 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2014.json")
-json_data_traffic_2015 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2015.json")
-json_data_traffic_2016 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2016.json")
-json_data_traffic_2017 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2017.json")
-json_data_traffic_2018 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2018.json")
-json_data_traffic_2019 <- fromJSON(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/traffic_2019.json")
-
+for (i in 1 : length(my_files)) {
+    # creating a list of JSON datafiles importing from Github
+    my_data[[i]] <- fromJSON(file = my_files[i])
+   
+     # transform JSON files to dataframes, for each JSON file one dataframe
+    df_temp_my_data[[i]] <- do.call(rbind.data.frame, my_data[[i]])
+    
+    # transpose dataframes to get the required structure
+    df_my_data[[i]] <- as.data.frame(t(df_temp_my_data[[i]]))  
+    
+    # Writing data into PostgreSQL
+    if (i <= 8) {
+        dbWriteTable(con, "cost_of_living", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    } else if (i > 8 && i <= 16) {
+        dbWriteTable(con, "crime", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    } else if (i > 16 && i <= 24) {
+        dbWriteTable(con, "health_care", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    } else if (i > 24 && i <= 32) {
+        dbWriteTable(con, "pollution", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    }else if (i > 32 && i <= 40) {
+        dbWriteTable(con, "property_investment", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    }else {
+        dbWriteTable(con, "traffic", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    }
+}
 ```
 
----
-
-Transform JSON files to dataframes, for each JSON file one dataframe is created
-
-```{r}
-df_temp_cost_of_living_2012 <- do.call(rbind.data.frame, json_data_cost_of_living_2012)
-df_temp_cost_of_living_2013 <- do.call(rbind.data.frame, json_data_cost_of_living_2013)
-df_temp_cost_of_living_2014 <- do.call(rbind.data.frame, json_data_cost_of_living_2014)
-df_temp_cost_of_living_2015 <- do.call(rbind.data.frame, json_data_cost_of_living_2015)
-df_temp_cost_of_living_2016 <- do.call(rbind.data.frame, json_data_cost_of_living_2016)
-df_temp_cost_of_living_2017 <- do.call(rbind.data.frame, json_data_cost_of_living_2017)
-df_temp_cost_of_living_2018 <- do.call(rbind.data.frame, json_data_cost_of_living_2018)
-df_temp_cost_of_living_2019 <- do.call(rbind.data.frame, json_data_cost_of_living_2019)
-
-df_temp_crime_2012 <- do.call(rbind.data.frame, json_data_crime_2012)
-df_temp_crime_2013 <- do.call(rbind.data.frame, json_data_crime_2013)
-df_temp_crime_2014 <- do.call(rbind.data.frame, json_data_crime_2014)
-df_temp_crime_2015 <- do.call(rbind.data.frame, json_data_crime_2015)
-df_temp_crime_2016 <- do.call(rbind.data.frame, json_data_crime_2016)
-df_temp_crime_2017 <- do.call(rbind.data.frame, json_data_crime_2017)
-df_temp_crime_2018 <- do.call(rbind.data.frame, json_data_crime_2018)
-df_temp_crime_2019 <- do.call(rbind.data.frame, json_data_crime_2019)
-
-df_temp_health_care_2012 <- do.call(rbind.data.frame, json_data_health_care_2012)
-df_temp_health_care_2013 <- do.call(rbind.data.frame, json_data_health_care_2013)
-df_temp_health_care_2014 <- do.call(rbind.data.frame, json_data_health_care_2014)
-df_temp_health_care_2015 <- do.call(rbind.data.frame, json_data_health_care_2015)
-df_temp_health_care_2016 <- do.call(rbind.data.frame, json_data_health_care_2016)
-df_temp_health_care_2017 <- do.call(rbind.data.frame, json_data_health_care_2017)
-df_temp_health_care_2018 <- do.call(rbind.data.frame, json_data_health_care_2018)
-df_temp_health_care_2019 <- do.call(rbind.data.frame, json_data_health_care_2019)
-
-df_temp_pollution_2012 <- do.call(rbind.data.frame, json_data_pollution_2012)
-df_temp_pollution_2013 <- do.call(rbind.data.frame, json_data_pollution_2013)
-df_temp_pollution_2014 <- do.call(rbind.data.frame, json_data_pollution_2014)
-df_temp_pollution_2015 <- do.call(rbind.data.frame, json_data_pollution_2015)
-df_temp_pollution_2016 <- do.call(rbind.data.frame, json_data_pollution_2016)
-df_temp_pollution_2017 <- do.call(rbind.data.frame, json_data_pollution_2017)
-df_temp_pollution_2018 <- do.call(rbind.data.frame, json_data_pollution_2018)
-df_temp_pollution_2019 <- do.call(rbind.data.frame, json_data_pollution_2019)
-
-df_temp_property_investment_2012 <- do.call(rbind.data.frame, json_data_property_investment_2012)
-df_temp_property_investment_2013 <- do.call(rbind.data.frame, json_data_property_investment_2013)
-df_temp_property_investment_2014 <- do.call(rbind.data.frame, json_data_property_investment_2014)
-df_temp_property_investment_2015 <- do.call(rbind.data.frame, json_data_property_investment_2015)
-df_temp_property_investment_2016 <- do.call(rbind.data.frame, json_data_property_investment_2016)
-df_temp_property_investment_2017 <- do.call(rbind.data.frame, json_data_property_investment_2017)
-df_temp_property_investment_2018 <- do.call(rbind.data.frame, json_data_property_investment_2018)
-df_temp_property_investment_2019 <- do.call(rbind.data.frame, json_data_property_investment_2019)
-
-df_temp_traffic_2012 <- do.call(rbind.data.frame, json_data_traffic_2012)
-df_temp_traffic_2013 <- do.call(rbind.data.frame, json_data_traffic_2013)
-df_temp_traffic_2014 <- do.call(rbind.data.frame, json_data_traffic_2014)
-df_temp_traffic_2015 <- do.call(rbind.data.frame, json_data_traffic_2015)
-df_temp_traffic_2016 <- do.call(rbind.data.frame, json_data_traffic_2016)
-df_temp_traffic_2017 <- do.call(rbind.data.frame, json_data_traffic_2017)
-df_temp_traffic_2018 <- do.call(rbind.data.frame, json_data_traffic_2018)
-df_temp_traffic_2019 <- do.call(rbind.data.frame, json_data_traffic_2019)
-
-```
-
----
-
-The dataframes are transposed to get the required structure
-
-```{r}
-df_cost_of_living_2012 <- as.data.frame(t(df_temp_cost_of_living_2012))
-df_cost_of_living_2013 <- as.data.frame(t(df_temp_cost_of_living_2013))
-df_cost_of_living_2014 <- as.data.frame(t(df_temp_cost_of_living_2014))
-df_cost_of_living_2015 <- as.data.frame(t(df_temp_cost_of_living_2015))
-df_cost_of_living_2016 <- as.data.frame(t(df_temp_cost_of_living_2016))
-df_cost_of_living_2017 <- as.data.frame(t(df_temp_cost_of_living_2017))
-df_cost_of_living_2018 <- as.data.frame(t(df_temp_cost_of_living_2018))
-df_cost_of_living_2019 <- as.data.frame(t(df_temp_cost_of_living_2019))
-
-
-df_crime_2012 <- as.data.frame(t(df_temp_crime_2012))
-df_crime_2013 <- as.data.frame(t(df_temp_crime_2013))
-df_crime_2014 <- as.data.frame(t(df_temp_crime_2014))
-df_crime_2015 <- as.data.frame(t(df_temp_crime_2015))
-df_crime_2016 <- as.data.frame(t(df_temp_crime_2016))
-df_crime_2017 <- as.data.frame(t(df_temp_crime_2017))
-df_crime_2018 <- as.data.frame(t(df_temp_crime_2018))
-df_crime_2019 <- as.data.frame(t(df_temp_crime_2019))
-
-df_health_care_2012 <- as.data.frame(t(df_temp_health_care_2012))
-df_health_care_2013 <- as.data.frame(t(df_temp_health_care_2013))
-df_health_care_2014 <- as.data.frame(t(df_temp_health_care_2014))
-df_health_care_2015 <- as.data.frame(t(df_temp_health_care_2015))
-df_health_care_2016 <- as.data.frame(t(df_temp_health_care_2016))
-df_health_care_2017 <- as.data.frame(t(df_temp_health_care_2017))
-df_health_care_2018 <- as.data.frame(t(df_temp_health_care_2018))
-df_health_care_2019 <- as.data.frame(t(df_temp_health_care_2019))
-
-df_pollution_2012 <- as.data.frame(t(df_temp_pollution_2012))
-df_pollution_2013 <- as.data.frame(t(df_temp_pollution_2013))
-df_pollution_2014 <- as.data.frame(t(df_temp_pollution_2014))
-df_pollution_2015 <- as.data.frame(t(df_temp_pollution_2015))
-df_pollution_2016 <- as.data.frame(t(df_temp_pollution_2016))
-df_pollution_2017 <- as.data.frame(t(df_temp_pollution_2017))
-df_pollution_2018 <- as.data.frame(t(df_temp_pollution_2018))
-df_pollution_2019 <- as.data.frame(t(df_temp_pollution_2019))
-
-df_property_investment_2012 <- as.data.frame(t(df_temp_property_investment_2012))
-df_property_investment_2013 <- as.data.frame(t(df_temp_property_investment_2013))
-df_property_investment_2014 <- as.data.frame(t(df_temp_property_investment_2014))
-df_property_investment_2015 <- as.data.frame(t(df_temp_property_investment_2015))
-df_property_investment_2016 <- as.data.frame(t(df_temp_property_investment_2016))
-df_property_investment_2017 <- as.data.frame(t(df_temp_property_investment_2017))
-df_property_investment_2018 <- as.data.frame(t(df_temp_property_investment_2018))
-df_property_investment_2019 <- as.data.frame(t(df_temp_property_investment_2019))
-
-
-df_traffic_2012 <- as.data.frame(t(df_temp_traffic_2012))
-df_traffic_2013 <- as.data.frame(t(df_temp_traffic_2013))
-df_traffic_2014 <- as.data.frame(t(df_temp_traffic_2014))
-df_traffic_2015 <- as.data.frame(t(df_temp_traffic_2015))
-df_traffic_2016 <- as.data.frame(t(df_temp_traffic_2016))
-df_traffic_2017 <- as.data.frame(t(df_temp_traffic_2017))
-df_traffic_2018 <- as.data.frame(t(df_temp_traffic_2018))
-df_traffic_2019 <- as.data.frame(t(df_temp_traffic_2019))
-
-```
-
----
-
-# Writing data into PostgreSQL
-
-The dataframe are now loaded into PostgreSQL for persistent storage
-
-```{r}
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2012, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2013, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2014, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2015, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2016, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2017, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2018, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "cost_of_living", 
-             value = df_cost_of_living_2019, append = TRUE, row.names = FALSE)
-
-dbWriteTable(con, "crime", 
-             value = df_crime_2012, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2013, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2014, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2015, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2016, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2017, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2018, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "crime", 
-             value = df_crime_2019, append = TRUE, row.names = FALSE)
-
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2012, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2013, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2014, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2015, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2016, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2017, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2018, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "health_care", 
-             value = df_health_care_2019, append = TRUE, row.names = FALSE)
-
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2012, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2013, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2014, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2015, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2016, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2017, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2018, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "pollution", 
-             value = df_pollution_2019, append = TRUE, row.names = FALSE)
-
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2012, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2013, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2014, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2015, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2016, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2017, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2018, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "property_investment", 
-             value = df_property_investment_2019, append = TRUE, row.names = FALSE)
-
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2012, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2013, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2014, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2015, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2016, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2017, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2018, append = TRUE, row.names = FALSE)
-dbWriteTable(con, "traffic", 
-             value = df_traffic_2019, append = TRUE, row.names = FALSE)
-```
 
 ---
 

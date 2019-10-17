@@ -21,7 +21,7 @@ class: center, middle, inverse, title-slide
 
 # Project assignment NumbeoR
 ### Elvir Ibrahimovic &amp; Svetislav Bratic
-### 29 9 2019
+### 23 10 2019
 
 ---
 
@@ -58,6 +58,7 @@ library(Hmisc)                         # calculation of correlations
 library(fpp)                           # forecasting/times series
 library(fpp2)                          # forecasting/times series
 library(fpp3)                          # forecasting/times series
+library(tsibble)                       # tsibble object used for forecasting
 ```
 
 ---
@@ -171,7 +172,7 @@ CREATE TABLE traffic (
 ```
 
 ---
-
+class: center, middle
 
 # Data import
 
@@ -221,7 +222,7 @@ for (i in 1 : length(my_files)) {
 
 
 ---
-
+class: center, middle
 # Export Data From PostgreSQL
 
 ---
@@ -231,6 +232,7 @@ One could export with sQL codes
 We use R codes instead
 
 ---
+class: center, middle
 
 ## R code
 
@@ -23280,14 +23282,17 @@ filter(df_master, Country=="Germany")
 ```
 
 ---
+class: center, middle
 
 ## SQL code
 
 ---
+class: center, middle
 
 # Data Understanding and Preparation
 
 ---
+class: center, middle
 
 ## Approach:
 
@@ -23298,6 +23303,7 @@ filter(df_master, Country=="Germany")
 * Final validation and verification of data set
 
 ---
+class: center, middle
 
 ## Data inspection
 
@@ -23481,6 +23487,7 @@ glimpse(df_master_continent)
 ```
 
 ---
+class: center, middle
 
 ## Data selection
 
@@ -29780,6 +29787,7 @@ glimpse(df_analysis)
 ```
 
 ---
+class: center, middle
 
 ## Data Cleansing
 
@@ -32980,43 +32988,6 @@ glimpse(df_analysis_clean)
 df_analysis_clean_2019 &lt;- filter(df_analysis_clean, Year == 2019)
 ```
 
-
-
-```r
-crime_plot_2019 &lt;- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
-                         geom_boxplot()
-                     
-ggplotly(crime_plot_2019)
-```
-
-<div id="htmlwidget-1d514ea11c889488dbf9" style="width:504px;height:504px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1d514ea11c889488dbf9">{"x":{"data":[{"x":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,5,4,4,4,4,6,6,6,6,1,1],"y":[21.5,23.28,35.32,49.35,24.25,22.57,45.02,44.52,46.39,28.57,24.69,42.46,22.8,38.57,36.51,21.37,29.54,32.46,36.77,35.17,34.51,42.72,37.27,39.29,40,27.84,32.13,30.09,26.66,41.93,23.53,20.8,48.88,43.79,16.32,34.05,21.47,32.16,19.32,46.01,49.33,13.26,46.66,42.72,40.38,40.83,44.27,45.46,66.51,17.38,13.73,29.73,19.86,41.03,43.82,46.73,48.78,60.79,29.31,39.55,42.76,39.51,47.13,52.3,46.43,62.55,51.26,46.81,70.24,50.71,76.8],"hoverinfo":"y","type":"box","fillcolor":"rgba(255,255,255,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"},"size":5.66929133858268},"line":{"color":"rgba(51,51,51,1)","width":1.88976377952756},"showlegend":false,"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":23.3059360730594,"r":7.30593607305936,"b":37.2602739726027,"l":37.2602739726027},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["Africa","Asia","Europe","North America","Oceania","South America"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["Africa","Asia","Europe","North America","Oceania","South America"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Continent","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[10.083,79.977],"tickmode":"array","ticktext":["20","40","60"],"tickvals":[20,40,60],"categoryorder":"array","categoryarray":["20","40","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Crime Index","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"1a80def1368":{"x":{},"y":{},"type":"box"}},"cur_data":"1a80def1368","visdat":{"1a80def1368":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-
-
-
----
-
-
-
-```r
-crime_health_plot_2019 &lt;- ggplot(df_analysis_clean_2019) +
-    geom_point(
-        mapping = aes(x = `Pollution Index`, y = `Cost of Living Index`,color= Continent, points=Country)
-        )
-```
-
-```
-## Warning: Ignoring unknown aesthetics: points
-```
-
-```r
-ggplotly(crime_health_plot_2019)
-```
-
-<div id="htmlwidget-554c9211d9d30bd14df1" style="width:504px;height:504px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-554c9211d9d30bd14df1">{"x":{"data":[{"x":[56.95,86.48],"y":[42.49,26.46],"text":["Pollution Index: 56.95<br />Cost of Living Index:  42.49<br />Continent: Africa<br />Country: South Africa","Pollution Index: 86.48<br />Cost of Living Index:  26.46<br />Continent: Africa<br />Country: Egypt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"Africa","legendgroup":"Africa","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[37.08,66.39,54.19,57.25,32.29,63.47,66.48,87.39,53.11,53.75,80.39,67.26,72.21,63.74,81.91,87.13,62.78,79.35,69.15,74.47,57.69,74.25,72.46,75.81,75.89],"y":[83.33,78.14,76.93,74.28,69.79,59.84,59.09,58.06,56.16,55.57,54.98,47.61,47.54,39.38,39.24,37.7,36.24,35.8,35.21,35.09,30.24,29.83,28.78,24.17,20.4],"text":["Pollution Index: 37.08<br />Cost of Living Index:  83.33<br />Continent: Asia<br />Country: Japan","Pollution Index: 66.39<br />Cost of Living Index:  78.14<br />Continent: Asia<br />Country: Hong Kong","Pollution Index: 54.19<br />Cost of Living Index:  76.93<br />Continent: Asia<br />Country: South Korea","Pollution Index: 57.25<br />Cost of Living Index:  74.28<br />Continent: Asia<br />Country: Israel","Pollution Index: 32.29<br />Cost of Living Index:  69.79<br />Continent: Asia<br />Country: Singapore","Pollution Index: 63.47<br />Cost of Living Index:  59.84<br />Continent: Asia<br />Country: Taiwan","Pollution Index: 66.48<br />Cost of Living Index:  59.09<br />Continent: Asia<br />Country: Qatar","Pollution Index: 87.39<br />Cost of Living Index:  58.06<br />Continent: Asia<br />Country: Lebanon","Pollution Index: 53.11<br />Cost of Living Index:  56.16<br />Continent: Asia<br />Country: United Arab Emirates","Pollution Index: 53.75<br />Cost of Living Index:  55.57<br />Continent: Asia<br />Country: Cyprus","Pollution Index: 80.39<br />Cost of Living Index:  54.98<br />Continent: Asia<br />Country: Jordan","Pollution Index: 67.26<br />Cost of Living Index:  47.61<br />Continent: Asia<br />Country: Saudi Arabia","Pollution Index: 72.21<br />Cost of Living Index:  47.54<br />Continent: Asia<br />Country: Thailand","Pollution Index: 63.74<br />Cost of Living Index:  39.38<br />Continent: Asia<br />Country: Malaysia","Pollution Index: 81.91<br />Cost of Living Index:  39.24<br />Continent: Asia<br />Country: China","Pollution Index: 87.13<br />Cost of Living Index:  37.70<br />Continent: Asia<br />Country: Vietnam","Pollution Index: 62.78<br />Cost of Living Index:  36.24<br />Continent: Asia<br />Country: Indonesia","Pollution Index: 79.35<br />Cost of Living Index:  35.80<br />Continent: Asia<br />Country: Iran","Pollution Index: 69.15<br />Cost of Living Index:  35.21<br />Continent: Asia<br />Country: Turkey","Pollution Index: 74.47<br />Cost of Living Index:  35.09<br />Continent: Asia<br />Country: Philippines","Pollution Index: 57.69<br />Cost of Living Index:  30.24<br />Continent: Asia<br />Country: Sri Lanka","Pollution Index: 74.25<br />Cost of Living Index:  29.83<br />Continent: Asia<br />Country: Kazakhstan","Pollution Index: 72.46<br />Cost of Living Index:  28.78<br />Continent: Asia<br />Country: Georgia","Pollution Index: 75.81<br />Cost of Living Index:  24.17<br />Continent: Asia<br />Country: India","Pollution Index: 75.89<br />Cost of Living Index:  20.40<br />Continent: Asia<br />Country: Pakistan"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(183,159,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(183,159,0,1)"}},"hoveron":"points","name":"Asia","legendgroup":"Asia","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[22.03,15.24,19.86,22.14,31.12,42.7,27.45,49.89,11.93,21.97,18.01,53.75,28.01,39.43,51.86,39.36,24.33,18.15,31.58,34.96,31.03,30.84,40.96,41.89,46.47,52.38,63.98,55.39,63.47,62.8,58.86,40.97,80.85,66.63],"y":[121.16,101.86,100.99,81.38,75.35,74.85,74.83,72.97,72.82,71.79,71.55,69.25,67.62,65.28,56.66,54.7,52.51,51.01,50.39,49.23,49.18,45.91,45.12,44.98,42.03,39.13,37.17,36.45,35.72,35.52,35.39,33.12,31.58,27.94],"text":["Pollution Index: 22.03<br />Cost of Living Index: 121.16<br />Continent: Europe<br />Country: Switzerland","Pollution Index: 15.24<br />Cost of Living Index: 101.86<br />Continent: Europe<br />Country: Iceland","Pollution Index: 19.86<br />Cost of Living Index: 100.99<br />Continent: Europe<br />Country: Norway","Pollution Index: 22.14<br />Cost of Living Index:  81.38<br />Continent: Europe<br />Country: Denmark","Pollution Index: 31.12<br />Cost of Living Index:  75.35<br />Continent: Europe<br />Country: Ireland","Pollution Index: 42.70<br />Cost of Living Index:  74.85<br />Continent: Europe<br />Country: France","Pollution Index: 27.45<br />Cost of Living Index:  74.83<br />Continent: Europe<br />Country: Netherlands","Pollution Index: 49.89<br />Cost of Living Index:  72.97<br />Continent: Europe<br />Country: Belgium","Pollution Index: 11.93<br />Cost of Living Index:  72.82<br />Continent: Europe<br />Country: Finland","Pollution Index: 21.97<br />Cost of Living Index:  71.79<br />Continent: Europe<br />Country: Austria","Pollution Index: 18.01<br />Cost of Living Index:  71.55<br />Continent: Europe<br />Country: Sweden","Pollution Index: 53.75<br />Cost of Living Index:  69.25<br />Continent: Europe<br />Country: Italy","Pollution Index: 28.01<br />Cost of Living Index:  67.62<br />Continent: Europe<br />Country: Germany","Pollution Index: 39.43<br />Cost of Living Index:  65.28<br />Continent: Europe<br />Country: United Kingdom","Pollution Index: 51.86<br />Cost of Living Index:  56.66<br />Continent: Europe<br />Country: Greece","Pollution Index: 39.36<br />Cost of Living Index:  54.70<br />Continent: Europe<br />Country: Spain","Pollution Index: 24.33<br />Cost of Living Index:  52.51<br />Continent: Europe<br />Country: Slovenia","Pollution Index: 18.15<br />Cost of Living Index:  51.01<br />Continent: Europe<br />Country: Estonia","Pollution Index: 31.58<br />Cost of Living Index:  50.39<br />Continent: Europe<br />Country: Portugal","Pollution Index: 34.96<br />Cost of Living Index:  49.23<br />Continent: Europe<br />Country: Latvia","Pollution Index: 31.03<br />Cost of Living Index:  49.18<br />Continent: Europe<br />Country: Croatia","Pollution Index: 30.84<br />Cost of Living Index:  45.91<br />Continent: Europe<br />Country: Lithuania","Pollution Index: 40.96<br />Cost of Living Index:  45.12<br />Continent: Europe<br />Country: Czech Republic","Pollution Index: 41.89<br />Cost of Living Index:  44.98<br />Continent: Europe<br />Country: Slovakia","Pollution Index: 46.47<br />Cost of Living Index:  42.03<br />Continent: Europe<br />Country: Hungary","Pollution Index: 52.38<br />Cost of Living Index:  39.13<br />Continent: Europe<br />Country: Poland","Pollution Index: 63.98<br />Cost of Living Index:  37.17<br />Continent: Europe<br />Country: Bulgaria","Pollution Index: 55.39<br />Cost of Living Index:  36.45<br />Continent: Europe<br />Country: Romania","Pollution Index: 63.47<br />Cost of Living Index:  35.72<br />Continent: Europe<br />Country: Bosnia And Herzegovina","Pollution Index: 62.80<br />Cost of Living Index:  35.52<br />Continent: Europe<br />Country: Russia","Pollution Index: 58.86<br />Cost of Living Index:  35.39<br />Continent: Europe<br />Country: Serbia","Pollution Index: 40.97<br />Cost of Living Index:  33.12<br />Continent: Europe<br />Country: Belarus","Pollution Index: 80.85<br />Cost of Living Index:  31.58<br />Continent: Europe<br />Country: Macedonia","Pollution Index: 66.63<br />Cost of Living Index:  27.94<br />Continent: Europe<br />Country: Ukraine"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,186,56,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,186,56,1)"}},"hoveron":"points","name":"Europe","legendgroup":"Europe","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[33.95,27.85,62,66.02],"y":[69.91,65.01,51.45,32.71],"text":["Pollution Index: 33.95<br />Cost of Living Index:  69.91<br />Continent: North America<br />Country: United States","Pollution Index: 27.85<br />Cost of Living Index:  65.01<br />Continent: North America<br />Country: Canada","Pollution Index: 62.00<br />Cost of Living Index:  51.45<br />Continent: North America<br />Country: Panama","Pollution Index: 66.02<br />Cost of Living Index:  32.71<br />Continent: North America<br />Country: Mexico"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"North America","legendgroup":"North America","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[22.74,23.97],"y":[72.62,72.08],"text":["Pollution Index: 22.74<br />Cost of Living Index:  72.62<br />Continent: Oceania<br />Country: New Zealand","Pollution Index: 23.97<br />Cost of Living Index:  72.08<br />Continent: Oceania<br />Country: Australia"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(97,156,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(97,156,255,1)"}},"hoveron":"points","name":"Oceania","legendgroup":"Oceania","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[65.54,57.72,52.35,61.74],"y":[47.73,42.8,33.09,30.15],"text":["Pollution Index: 65.54<br />Cost of Living Index:  47.73<br />Continent: South America<br />Country: Chile","Pollution Index: 57.72<br />Cost of Living Index:  42.80<br />Continent: South America<br />Country: Brazil","Pollution Index: 52.35<br />Cost of Living Index:  33.09<br />Continent: South America<br />Country: Argentina","Pollution Index: 61.74<br />Cost of Living Index:  30.15<br />Continent: South America<br />Country: Colombia"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(245,100,227,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(245,100,227,1)"}},"hoveron":"points","name":"South America","legendgroup":"South America","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.3059360730594,"r":7.30593607305936,"b":37.2602739726027,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[8.157,91.163],"tickmode":"array","ticktext":["25","50","75"],"tickvals":[25,50,75],"categoryorder":"array","categoryarray":["25","50","75"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Pollution Index","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[15.362,126.198],"tickmode":"array","ticktext":["25","50","75","100","125"],"tickvals":[25,50,75,100,125],"categoryorder":"array","categoryarray":["25","50","75","100","125"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Cost of Living Index","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.938132733408324},"annotations":[{"text":"Continent","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"1a8031bf29bf":{"x":{},"y":{},"colour":{},"points":{},"type":"scatter"}},"cur_data":"1a8031bf29bf","visdat":{"1a8031bf29bf":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-
-
 ---
 
 
@@ -33047,17 +33018,12 @@ sum(is.na(df_analysis_numeric))
 ```
 
 ---
+class: center, middle
 
 # Exploratory Data Analysis
 
-
-
-```r
-# write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
-```
-
-
 ---
+class: center, middle
 
 ## Correlations
 
@@ -33066,12 +33032,7 @@ sum(is.na(df_analysis_numeric))
 
 First, a correlation matix will be generated with the help of the corrplot package
 
-
-```r
-corrplot(cor(df_analysis_numeric), method = "circle", title = "Correlation matrix")
-```
-
-![](NumbeoR_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+![](NumbeoR_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
 
 
 
@@ -33231,25 +33192,53 @@ corN
 
 ---
 
+### Visualization
+
+---
+
+#### Boxplots for Crime Index
+
+<div id="htmlwidget-b2bd50a63d4cb73b4c0f" style="width:504px;height:504px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b2bd50a63d4cb73b4c0f">{"x":{"data":[{"x":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,5,4,4,4,4,6,6,6,6,1,1],"y":[21.5,23.28,35.32,49.35,24.25,22.57,45.02,44.52,46.39,28.57,24.69,42.46,22.8,38.57,36.51,21.37,29.54,32.46,36.77,35.17,34.51,42.72,37.27,39.29,40,27.84,32.13,30.09,26.66,41.93,23.53,20.8,48.88,43.79,16.32,34.05,21.47,32.16,19.32,46.01,49.33,13.26,46.66,42.72,40.38,40.83,44.27,45.46,66.51,17.38,13.73,29.73,19.86,41.03,43.82,46.73,48.78,60.79,29.31,39.55,42.76,39.51,47.13,52.3,46.43,62.55,51.26,46.81,70.24,50.71,76.8],"hoverinfo":"y","type":"box","fillcolor":"rgba(255,255,255,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"},"size":5.66929133858268},"line":{"color":"rgba(51,51,51,1)","width":1.88976377952756},"showlegend":false,"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":23.3059360730594,"r":7.30593607305936,"b":37.2602739726027,"l":37.2602739726027},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["Africa","Asia","Europe","North America","Oceania","South America"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["Africa","Asia","Europe","North America","Oceania","South America"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Continent","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[10.083,79.977],"tickmode":"array","ticktext":["20","40","60"],"tickvals":[20,40,60],"categoryorder":"array","categoryarray":["20","40","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Crime Index","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"31f47c7b22a2":{"x":{},"y":{},"type":"box"}},"cur_data":"31f47c7b22a2","visdat":{"31f47c7b22a2":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+
+
+
+---
+#### Scatter Plot
+
+<div id="htmlwidget-46ab00a1bb91f3c72e01" style="width:504px;height:504px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-46ab00a1bb91f3c72e01">{"x":{"data":[{"x":[56.95,86.48],"y":[42.49,26.46],"text":["Pollution Index: 56.95<br />Cost of Living Index:  42.49<br />Continent: Africa<br />Country: South Africa","Pollution Index: 86.48<br />Cost of Living Index:  26.46<br />Continent: Africa<br />Country: Egypt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"Africa","legendgroup":"Africa","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[37.08,66.39,54.19,57.25,32.29,63.47,66.48,87.39,53.11,53.75,80.39,67.26,72.21,63.74,81.91,87.13,62.78,79.35,69.15,74.47,57.69,74.25,72.46,75.81,75.89],"y":[83.33,78.14,76.93,74.28,69.79,59.84,59.09,58.06,56.16,55.57,54.98,47.61,47.54,39.38,39.24,37.7,36.24,35.8,35.21,35.09,30.24,29.83,28.78,24.17,20.4],"text":["Pollution Index: 37.08<br />Cost of Living Index:  83.33<br />Continent: Asia<br />Country: Japan","Pollution Index: 66.39<br />Cost of Living Index:  78.14<br />Continent: Asia<br />Country: Hong Kong","Pollution Index: 54.19<br />Cost of Living Index:  76.93<br />Continent: Asia<br />Country: South Korea","Pollution Index: 57.25<br />Cost of Living Index:  74.28<br />Continent: Asia<br />Country: Israel","Pollution Index: 32.29<br />Cost of Living Index:  69.79<br />Continent: Asia<br />Country: Singapore","Pollution Index: 63.47<br />Cost of Living Index:  59.84<br />Continent: Asia<br />Country: Taiwan","Pollution Index: 66.48<br />Cost of Living Index:  59.09<br />Continent: Asia<br />Country: Qatar","Pollution Index: 87.39<br />Cost of Living Index:  58.06<br />Continent: Asia<br />Country: Lebanon","Pollution Index: 53.11<br />Cost of Living Index:  56.16<br />Continent: Asia<br />Country: United Arab Emirates","Pollution Index: 53.75<br />Cost of Living Index:  55.57<br />Continent: Asia<br />Country: Cyprus","Pollution Index: 80.39<br />Cost of Living Index:  54.98<br />Continent: Asia<br />Country: Jordan","Pollution Index: 67.26<br />Cost of Living Index:  47.61<br />Continent: Asia<br />Country: Saudi Arabia","Pollution Index: 72.21<br />Cost of Living Index:  47.54<br />Continent: Asia<br />Country: Thailand","Pollution Index: 63.74<br />Cost of Living Index:  39.38<br />Continent: Asia<br />Country: Malaysia","Pollution Index: 81.91<br />Cost of Living Index:  39.24<br />Continent: Asia<br />Country: China","Pollution Index: 87.13<br />Cost of Living Index:  37.70<br />Continent: Asia<br />Country: Vietnam","Pollution Index: 62.78<br />Cost of Living Index:  36.24<br />Continent: Asia<br />Country: Indonesia","Pollution Index: 79.35<br />Cost of Living Index:  35.80<br />Continent: Asia<br />Country: Iran","Pollution Index: 69.15<br />Cost of Living Index:  35.21<br />Continent: Asia<br />Country: Turkey","Pollution Index: 74.47<br />Cost of Living Index:  35.09<br />Continent: Asia<br />Country: Philippines","Pollution Index: 57.69<br />Cost of Living Index:  30.24<br />Continent: Asia<br />Country: Sri Lanka","Pollution Index: 74.25<br />Cost of Living Index:  29.83<br />Continent: Asia<br />Country: Kazakhstan","Pollution Index: 72.46<br />Cost of Living Index:  28.78<br />Continent: Asia<br />Country: Georgia","Pollution Index: 75.81<br />Cost of Living Index:  24.17<br />Continent: Asia<br />Country: India","Pollution Index: 75.89<br />Cost of Living Index:  20.40<br />Continent: Asia<br />Country: Pakistan"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(183,159,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(183,159,0,1)"}},"hoveron":"points","name":"Asia","legendgroup":"Asia","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[22.03,15.24,19.86,22.14,31.12,42.7,27.45,49.89,11.93,21.97,18.01,53.75,28.01,39.43,51.86,39.36,24.33,18.15,31.58,34.96,31.03,30.84,40.96,41.89,46.47,52.38,63.98,55.39,63.47,62.8,58.86,40.97,80.85,66.63],"y":[121.16,101.86,100.99,81.38,75.35,74.85,74.83,72.97,72.82,71.79,71.55,69.25,67.62,65.28,56.66,54.7,52.51,51.01,50.39,49.23,49.18,45.91,45.12,44.98,42.03,39.13,37.17,36.45,35.72,35.52,35.39,33.12,31.58,27.94],"text":["Pollution Index: 22.03<br />Cost of Living Index: 121.16<br />Continent: Europe<br />Country: Switzerland","Pollution Index: 15.24<br />Cost of Living Index: 101.86<br />Continent: Europe<br />Country: Iceland","Pollution Index: 19.86<br />Cost of Living Index: 100.99<br />Continent: Europe<br />Country: Norway","Pollution Index: 22.14<br />Cost of Living Index:  81.38<br />Continent: Europe<br />Country: Denmark","Pollution Index: 31.12<br />Cost of Living Index:  75.35<br />Continent: Europe<br />Country: Ireland","Pollution Index: 42.70<br />Cost of Living Index:  74.85<br />Continent: Europe<br />Country: France","Pollution Index: 27.45<br />Cost of Living Index:  74.83<br />Continent: Europe<br />Country: Netherlands","Pollution Index: 49.89<br />Cost of Living Index:  72.97<br />Continent: Europe<br />Country: Belgium","Pollution Index: 11.93<br />Cost of Living Index:  72.82<br />Continent: Europe<br />Country: Finland","Pollution Index: 21.97<br />Cost of Living Index:  71.79<br />Continent: Europe<br />Country: Austria","Pollution Index: 18.01<br />Cost of Living Index:  71.55<br />Continent: Europe<br />Country: Sweden","Pollution Index: 53.75<br />Cost of Living Index:  69.25<br />Continent: Europe<br />Country: Italy","Pollution Index: 28.01<br />Cost of Living Index:  67.62<br />Continent: Europe<br />Country: Germany","Pollution Index: 39.43<br />Cost of Living Index:  65.28<br />Continent: Europe<br />Country: United Kingdom","Pollution Index: 51.86<br />Cost of Living Index:  56.66<br />Continent: Europe<br />Country: Greece","Pollution Index: 39.36<br />Cost of Living Index:  54.70<br />Continent: Europe<br />Country: Spain","Pollution Index: 24.33<br />Cost of Living Index:  52.51<br />Continent: Europe<br />Country: Slovenia","Pollution Index: 18.15<br />Cost of Living Index:  51.01<br />Continent: Europe<br />Country: Estonia","Pollution Index: 31.58<br />Cost of Living Index:  50.39<br />Continent: Europe<br />Country: Portugal","Pollution Index: 34.96<br />Cost of Living Index:  49.23<br />Continent: Europe<br />Country: Latvia","Pollution Index: 31.03<br />Cost of Living Index:  49.18<br />Continent: Europe<br />Country: Croatia","Pollution Index: 30.84<br />Cost of Living Index:  45.91<br />Continent: Europe<br />Country: Lithuania","Pollution Index: 40.96<br />Cost of Living Index:  45.12<br />Continent: Europe<br />Country: Czech Republic","Pollution Index: 41.89<br />Cost of Living Index:  44.98<br />Continent: Europe<br />Country: Slovakia","Pollution Index: 46.47<br />Cost of Living Index:  42.03<br />Continent: Europe<br />Country: Hungary","Pollution Index: 52.38<br />Cost of Living Index:  39.13<br />Continent: Europe<br />Country: Poland","Pollution Index: 63.98<br />Cost of Living Index:  37.17<br />Continent: Europe<br />Country: Bulgaria","Pollution Index: 55.39<br />Cost of Living Index:  36.45<br />Continent: Europe<br />Country: Romania","Pollution Index: 63.47<br />Cost of Living Index:  35.72<br />Continent: Europe<br />Country: Bosnia And Herzegovina","Pollution Index: 62.80<br />Cost of Living Index:  35.52<br />Continent: Europe<br />Country: Russia","Pollution Index: 58.86<br />Cost of Living Index:  35.39<br />Continent: Europe<br />Country: Serbia","Pollution Index: 40.97<br />Cost of Living Index:  33.12<br />Continent: Europe<br />Country: Belarus","Pollution Index: 80.85<br />Cost of Living Index:  31.58<br />Continent: Europe<br />Country: Macedonia","Pollution Index: 66.63<br />Cost of Living Index:  27.94<br />Continent: Europe<br />Country: Ukraine"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,186,56,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,186,56,1)"}},"hoveron":"points","name":"Europe","legendgroup":"Europe","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[33.95,27.85,62,66.02],"y":[69.91,65.01,51.45,32.71],"text":["Pollution Index: 33.95<br />Cost of Living Index:  69.91<br />Continent: North America<br />Country: United States","Pollution Index: 27.85<br />Cost of Living Index:  65.01<br />Continent: North America<br />Country: Canada","Pollution Index: 62.00<br />Cost of Living Index:  51.45<br />Continent: North America<br />Country: Panama","Pollution Index: 66.02<br />Cost of Living Index:  32.71<br />Continent: North America<br />Country: Mexico"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"North America","legendgroup":"North America","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[22.74,23.97],"y":[72.62,72.08],"text":["Pollution Index: 22.74<br />Cost of Living Index:  72.62<br />Continent: Oceania<br />Country: New Zealand","Pollution Index: 23.97<br />Cost of Living Index:  72.08<br />Continent: Oceania<br />Country: Australia"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(97,156,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(97,156,255,1)"}},"hoveron":"points","name":"Oceania","legendgroup":"Oceania","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[65.54,57.72,52.35,61.74],"y":[47.73,42.8,33.09,30.15],"text":["Pollution Index: 65.54<br />Cost of Living Index:  47.73<br />Continent: South America<br />Country: Chile","Pollution Index: 57.72<br />Cost of Living Index:  42.80<br />Continent: South America<br />Country: Brazil","Pollution Index: 52.35<br />Cost of Living Index:  33.09<br />Continent: South America<br />Country: Argentina","Pollution Index: 61.74<br />Cost of Living Index:  30.15<br />Continent: South America<br />Country: Colombia"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(245,100,227,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(245,100,227,1)"}},"hoveron":"points","name":"South America","legendgroup":"South America","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.3059360730594,"r":7.30593607305936,"b":37.2602739726027,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[8.157,91.163],"tickmode":"array","ticktext":["25","50","75"],"tickvals":[25,50,75],"categoryorder":"array","categoryarray":["25","50","75"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Pollution Index","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[15.362,126.198],"tickmode":"array","ticktext":["25","50","75","100","125"],"tickvals":[25,50,75,100,125],"categoryorder":"array","categoryarray":["25","50","75","100","125"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Cost of Living Index","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.938132733408324},"annotations":[{"text":"Continent","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"31f432cf137c":{"x":{},"y":{},"colour":{},"points":{},"type":"scatter"}},"cur_data":"31f432cf137c","visdat":{"31f432cf137c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+
+
+---
+class: center, middle
+
 # Forecasting
 
-Time series analysis for crime rate in Germany
-
-see https://otexts.com/fpp3/
-see https://github.com/robjhyndman/fpp3-package
 
 ---
 
-Main forecasting methods:
+## General 
 
+What? 
+We are going to analyse the **crime rate**.
+
+What for?
+We are analyizing the crime rate for **Germany**?
+
+For which time horizon?
+We are analyizing the crime rate for Germany for the years **2012 until 2019**?
+
+
+Note:
+This chapter is in general according to [Forecasting: Principles and Practice - February 2019](https://otexts.com/fpp3/) and [Forecasting: Principles and Practice - April 2018](https://otexts.com/fpp2/) by Rob J Hyndman and George Athanasopoulos 
 
 ---
+class: center, middle
 
 ## Data Preparation
 
 ---
-
-
 ### Preparation Dataframe
 
 Filter dataframe only for Germany
@@ -33259,13 +33248,61 @@ Filter dataframe only for Germany
 df_Germany &lt;- filter(df_master, Country=="Germany")
 ```
 
-
+There are diffrent objects that can be used lateron:
+* tsibbles
+* vectors -&gt; timeseries
+* dataframes -&gt; timeseries
 ---
 
+### Data transformation into tsibble
 
+A time series can be thought of as a list of numbers (the measurements), along with some information about what times those numbers were recorded (the index). This information can be stored as a tsibble object in R.
+
+
+```r
+tsibble_Germany &lt;- as_tsibble(df_Germany, index=Year)
+class(tsibble_Germany)
+```
+
+```
+## [1] "tbl_ts"     "tbl_df"     "tbl"        "data.frame"
+```
+
+
+```r
+tsibble_Germany
+```
+
+```
+## # A tsibble: 8 x 26 [1Y]
+##    Year Country `Cost of Living~ `Rent Index` `Cost of Living~
+##   &lt;int&gt; &lt;chr&gt;              &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt;
+## 1  2012 Germany             88.6         28.9             67.1
+## 2  2013 Germany             91.6         33.2             63.6
+## 3  2014 Germany             87.1         30.3             59.5
+## 4  2015 Germany             76.3         27.2             52.3
+## 5  2016 Germany             65.5         24.0             45.6
+## 6  2017 Germany             65.5         25.4             46.3
+## 7  2018 Germany             74.4         29.1             52.5
+## 8  2019 Germany             67.6         26.8             48.0
+## # ... with 21 more variables: `Groceries Index` &lt;dbl&gt;, `Restaurant Price
+## #   Index` &lt;dbl&gt;, `Local Purchasing Power Index` &lt;dbl&gt;, `Crime
+## #   Index` &lt;dbl&gt;, `Safety Index` &lt;dbl&gt;, `Health Care Index` &lt;dbl&gt;, `Health
+## #   CareExp. Index` &lt;dbl&gt;, `Pollution Index` &lt;dbl&gt;, `Exp Pollution
+## #   Index` &lt;dbl&gt;, `Price To Income Ratio` &lt;dbl&gt;, `Gross Rental Yield City
+## #   Centre` &lt;dbl&gt;, `Gross Rental Yield Outside of Centre` &lt;dbl&gt;, `Price To
+## #   Rent Ratio City Centre` &lt;dbl&gt;, `Price To Rent Ratio Outside Of City
+## #   Centre` &lt;dbl&gt;, `Mortgage As A Percentage Of Income` &lt;dbl&gt;,
+## #   `Affordability Index` &lt;dbl&gt;, `Traffic Index` &lt;dbl&gt;, `Time Index(in
+## #   minutes)` &lt;dbl&gt;, `Time Exp. Index` &lt;dbl&gt;, `Inefficiency Index` &lt;dbl&gt;,
+## #   `CO2 Emission Index` &lt;dbl&gt;
+```
+
+
+---
 ### Data transformation into vectors and time series   
 
-In order to be able to work with the partial data sets later, we split the respective dataframe into individual vectors for Crime Index and Year.
+In order to be able to work with the partial data sets later, we split the respective dataframe into individual vectors for different indexes.
 
 
 
@@ -33342,6 +33379,10 @@ class(crimeGermanyTS)
 ```
 ## [1] "ts"
 ```
+
+
+---
+### Data transformation from dataframes into time series   
 
 Converting the dataframe into a times series (dataframe is coerced to a numeric matrix)
 
@@ -33464,47 +33505,95 @@ GermanyTS
 ```
 
 ---
+class: center, middle
 
-### Plotting times series
+## Model choice
+
+---
+There are many different models to analyize times series. 
+
+How do we chose the right model?
+1. Visual inspection: is there seasonality or trend?
+2. Is decomposition technique additive or multiplicative? (Log tranformation if required)
+3. Chosing the appropriate model, e.g. 
+
+Model                                  |   Seasonal?  |    Trend?    | Correlations?
+---------------------------------------|--------------|--------------|--------------
+Simple Moving Average Smoothing        |      no      |     yes      |      no 
+Seasonal Adjustments                   |      yes     |     yes      |      no 
+Simple Exponential Smoothing           |      no      |     yes      |      no 
+Holts Exponential Smoothing            |      no      |     yes      |      no 
+Holt-Winters Exponential Smoothing     |      yes     |     yes      |      no 
+ARIMA                                  |      yes     |     yes      |      yes 
+
+4. Testing of the model
+5. Verification of the model performance
+
+according to [Data Science - Part X - Time Series Forecasting](https://www.youtube.com/watch?v=msFkHl7P28k&amp;t=1922s) by Derek Kane
+
+---
 
 
-```r
-par(mfrow=c(2,2))
-plot(crimeGermanyTS, col="black", main="Crime Index Germany")
-plot(costOfLivingGermanyTS, col="red", main="Cost of Living Index Germany")
-plot(healthCareGermanyTS, col="orange", main="Health Care Index Germany")
-plot(pollutionGermanyTS, col="purple", main="Pollution Index Germany")
-```
+### Visual inspection
 
-![](NumbeoR_files/figure-html/unnamed-chunk-47-1.png)&lt;!-- --&gt;
+---
 
-
-```r
-library(GGally)
-ggCorAnalysis &lt;- select(df_analysis_numeric, `Health Care Index`,`Pollution Index`,`Crime Index`,`Cost of Living Index`)
-GGally::ggpairs(ggCorAnalysis)
-```
+#### Crime Index Germany
 
 ![](NumbeoR_files/figure-html/unnamed-chunk-48-1.png)&lt;!-- --&gt;
 
 ---
 
-## Modelling
+#### Cost of Living Index Germany
+![](NumbeoR_files/figure-html/unnamed-chunk-49-1.png)&lt;!-- --&gt;
+
 
 ---
 
+#### Health Care Index Germany
+![](NumbeoR_files/figure-html/unnamed-chunk-50-1.png)&lt;!-- --&gt;
+
+---
+
+
+#### Pollution Index Germany
+![](NumbeoR_files/figure-html/unnamed-chunk-51-1.png)&lt;!-- --&gt;
+
+---
+#### Overall overview 
+![](NumbeoR_files/figure-html/unnamed-chunk-52-1.png)&lt;!-- --&gt;
+
+----
+
+#### Correlations
+
+![](NumbeoR_files/figure-html/unnamed-chunk-53-1.png)&lt;!-- --&gt;
+
+---
+#### Conclusion
+
+As there are no significant correlations and no seasonal components, models like 
+* Simple forecasting methods
+* Simple Moving Average Smoothing
+* Simple Exponential Smoothing
+* Holts Exponential Smoothing  
+can be used.
+
+---
+class: center, middle
+
+## Modelling
+
+---
+class: center, middle
 ### Some simple forecasting methods
 
 ---
 
 #### Average method
 
-The forecasted values are equal to the average (or “mean”) of the historical data. 
+The forecasted values are equal to the average (or **“mean”**) of the historical data. 
 h is the time horizon for the forecast.
-
-```r
-meanf(crimeGermanyTS, h=3)
-```
 
 ```
 ##      Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95
@@ -33518,12 +33607,8 @@ meanf(crimeGermanyTS, h=3)
 
 #### Naïve method (random walk forecasts)
 
-The last value of the historical data is set as predicted value. 
+The **last value** of the historical data is set as predicted value. 
 h is the time horizon for the forecast.
-
-```r
-naive(crimeGermanyTS, h=3)
-```
 
 ```
 ##      Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95
@@ -33532,13 +33617,8 @@ naive(crimeGermanyTS, h=3)
 ## 2022          34.51 27.67773 41.34227 24.06094 44.95906
 ```
 
-Variation: *Drift method*
-Change over time (=drift) is the average change in the historical data.
-
-```r
-driftCrime &lt;- rwf(crimeGermanyTS, h=3, drift=TRUE)
-driftCrime
-```
+Variation: **Drift method**   
+Change over time (=drift) is the **average change** in the historical data.
 
 ```
 ##      Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95
@@ -33551,23 +33631,7 @@ driftCrime
 ---
 #### Plotting the forecasts
 
-
-```r
-crimeGermanyPlot &lt;- window(crimeGermanyTS,start=2012,end=2019)
-# Plot some forecasts
-autoplot(crimeGermanyPlot) +
-  autolayer(meanf(crimeGermanyPlot, h=3),
-    series="Mean", PI=FALSE) +
-  autolayer(naive(crimeGermanyPlot, h=3),
-    series="Naïve", PI=FALSE) +
-  autolayer(rwf(crimeGermanyTS, h=3, drift=TRUE),
-    series="Naïve Drift Method", PI=FALSE) +
-  ggtitle("Forecasts for Crime Index") +
-  xlab("Year") + ylab("Crime Index") +
-  guides(colour=guide_legend(title="Forecast"))
-```
-
-![](NumbeoR_files/figure-html/unnamed-chunk-52-1.png)&lt;!-- --&gt;
+![](NumbeoR_files/figure-html/unnamed-chunk-57-1.png)&lt;!-- --&gt;
 
 
 ---
@@ -33577,56 +33641,81 @@ autoplot(crimeGermanyPlot) +
 For the three methods Mean, Naïve Method and Drift Method the Accuracy can be deducted from comparison of forecasts 2017-2019 and real data.
 
 
-```r
-crime1 &lt;- meanf(window(crimeGermanyTS, start=2012, end=2016), h=3)
-crime2 &lt;- rwf(window(crimeGermanyTS, start=2012, end=2016), h=3)
-crime3 &lt;- rwf(window(crimeGermanyTS, start=2012, end=2016), drift=TRUE, h=3)
-autoplot(crimeGermanyPlot) +
-  autolayer(crime1, PI=FALSE, series="Mean") +
-  autolayer(crime2, PI=FALSE, series="Naïve") +
-  autolayer(crime3, PI=FALSE, series="Naïve Drift Method") +
-  xlab("Year") + ylab("Crime Index") +
-  ggtitle("Crime Index Germany") +
-  guides(colour=guide_legend(title="Forecast"))
+
+
+
+
+
+```
+## Selecting index: "Year"
+## Selecting index: "Year"
 ```
 
-![](NumbeoR_files/figure-html/unnamed-chunk-53-1.png)&lt;!-- --&gt;
+```
+## Plot variable not specified, automatically selected `.vars = Crime Index`
+```
+
+![](NumbeoR_files/figure-html/unnamed-chunk-59-1.png)&lt;!-- --&gt;
+
+
 
 
 ---
 
-### Autocorrelation
-We measure the relationship between: 
-yt and yt-1
-yt and yt-2
-yt and yt-3
+### Autocorrelation  
+Autocorrelation measures the linear relationship between lagged values of a time series.
+This means we measure the relationship between: 
+y~t~ and y~t-1~
+y~t~ and y~t-2~
+y~t~ and y~t-3~
 etc.
 
----
 
-```r
-lag.plot(crimeGermanyTS,lags=7,do.lines=FALSE)
-```
+![](NumbeoR_files/figure-html/unnamed-chunk-60-1.png)&lt;!-- --&gt;
 
-![](NumbeoR_files/figure-html/unnamed-chunk-54-1.png)&lt;!-- --&gt;
 The autocorrelations are the correlations associated with these scatterplots.
+The highest positiv relationship is at lags 1 and 2.
 
 ---
 
-The autocorrelations coefficients are displayed by the autocorrelation function ggAcf function
+The autocorrelations coefficients are displayed by the autocorrelation function ggAcf function  
 
-```r
-ggAcf(crimeGermanyTS)
+
+
+```
+## Warning: `...` must not be empty for ungrouped data frames.
+## Did you want `data = everything()`?
 ```
 
-![](NumbeoR_files/figure-html/unnamed-chunk-55-1.png)&lt;!-- --&gt;
+![](NumbeoR_files/figure-html/unnamed-chunk-61-1.png)&lt;!-- --&gt;
 
 The dashed blue lines (±2/√T where T is the length of the time, in our case ±0,76) indicate whether the correlations are significantly different from zero.
 In our case no correlation is significant. 
 Time series that show no autocorrelation are called *white noise*. 
 
 ---
-### Non-seasonal ARIMA models
+### Linear Model
+
+First we train the model with TSLM() (time series linear model).
+
+
+```r
+fit &lt;- tsibble_Germany %&gt;%  model(trend_model = TSLM(`Crime Index` ~ trend()))
+fit
+```
+
+```
+## # A mable: 1 x 1
+##   trend_model
+##   &lt;model&gt;    
+## 1 &lt;TSLM&gt;
+```
+
+
+----
+class: center
+
+![](NumbeoR_files/figure-html/unnamed-chunk-63-1.png)&lt;!-- --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

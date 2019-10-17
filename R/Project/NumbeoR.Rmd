@@ -1,7 +1,7 @@
 ---
 title: "Project assignment NumbeoR"
 author: "Elvir Ibrahimovic & Svetislav Bratic"
-date: "29 9 2019"
+date: "23 10 2019"
 output: 
   xaringan::moon_reader:
     lib_dir: libs
@@ -44,6 +44,7 @@ library(Hmisc)                         # calculation of correlations
 library(fpp)                           # forecasting/times series
 library(fpp2)                          # forecasting/times series
 library(fpp3)                          # forecasting/times series
+library(tsibble)                       # tsibble object used for forecasting
 
 
 ```
@@ -157,7 +158,7 @@ CREATE TABLE traffic (
 ```
 
 ---
-
+class: center, middle
 
 # Data import
 
@@ -206,16 +207,17 @@ for (i in 1 : length(my_files)) {
 
 
 ---
-
+class: center, middle
 # Export Data From PostgreSQL
 
 ---
 
-There are different ways for exporting and further preparing data from PostgreSQL
-One could export with sQL codes
-We use R codes instead
+There are different ways for exporting and further preparing data from PostgreSQL.  
+One could export with sQL codes.  
+We use R codes instead.
 
 ---
+class: center, middle
 
 ## R code
 
@@ -260,15 +262,16 @@ filter(df_master, Country=="Germany")
 ```
 
 ---
+class: center, middle
 
 ## SQL code
 
 ---
+class: center, middle
 
 # Data Understanding and Preparation
 
 ---
-
 ## Approach:
 
 * Detailed inspection of data and data structure
@@ -278,6 +281,7 @@ filter(df_master, Country=="Germany")
 * Final validation and verification of data set
 
 ---
+class: center, middle
 
 ## Data inspection
 
@@ -341,6 +345,7 @@ glimpse(df_master_continent)
 ```
 
 ---
+class: center, middle
 
 ## Data selection
 
@@ -371,6 +376,7 @@ glimpse(df_analysis)
 ```
 
 ---
+class: center, middle
 
 ## Data Cleansing
 
@@ -415,29 +421,6 @@ glimpse(df_analysis_clean)
 df_analysis_clean_2019 <- filter(df_analysis_clean, Year == 2019)
 ```
 
-
-```{r}
-crime_plot_2019 <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
-                         geom_boxplot()
-                     
-ggplotly(crime_plot_2019)
-```
-
-
-
----
-
-
-```{r}
-crime_health_plot_2019 <- ggplot(df_analysis_clean_2019) +
-    geom_point(
-        mapping = aes(x = `Pollution Index`, y = `Cost of Living Index`,color= Continent, points=Country)
-        )
-
-ggplotly(crime_health_plot_2019)
-```
-
-
 ---
 
 ```{r}
@@ -462,16 +445,12 @@ sum(is.na(df_analysis_numeric))
 ```
 
 ---
+class: center, middle
 
 # Exploratory Data Analysis
 
-
-```{r}
-# write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
-```
-
-
 ---
+class: center, middle
 
 ## Correlations
 
@@ -480,9 +459,9 @@ sum(is.na(df_analysis_numeric))
 
 First, a correlation matix will be generated with the help of the corrplot package
 
-```{r}
+```{r echo=FALSE}
 
-corrplot(cor(df_analysis_numeric), method = "circle", title = "Correlation matrix")
+corrplot(cor(df_analysis_numeric), method = "circle")
 ```
 
 
@@ -550,25 +529,63 @@ corN
 
 ---
 
+### Visualization
+
+---
+
+#### Boxplots for Crime Index
+
+```{r echo=FALSE}
+crime_plot_2019 <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
+                         geom_boxplot()
+                     
+ggplotly(crime_plot_2019)
+```
+
+
+
+---
+#### Scatter Plot
+
+```{r echo=FALSE, warning=FALSE}
+crime_health_plot_2019 <- ggplot(df_analysis_clean_2019) +
+    geom_point(
+        mapping = aes(x = `Pollution Index`, y = `Cost of Living Index`,color= Continent, points=Country)
+        )
+
+ggplotly(crime_health_plot_2019)
+```
+
+
+---
+class: center, middle
+
 # Forecasting
 
-Time series analysis for crime rate in Germany
-
-see https://otexts.com/fpp3/
-see https://github.com/robjhyndman/fpp3-package
 
 ---
 
-Main forecasting methods:
+## General 
 
+What? 
+We are going to analyse the **crime rate**.
+
+What for?
+We are analyizing the crime rate for **Germany**?
+
+For which time horizon?
+We are analyizing the crime rate for Germany for the years **2012 until 2019**?
+
+
+Note:
+This chapter is in general according to [Forecasting: Principles and Practice - February 2019](https://otexts.com/fpp3/) and [Forecasting: Principles and Practice - April 2018](https://otexts.com/fpp2/) by Rob J Hyndman and George Athanasopoulos 
 
 ---
+class: center, middle
 
 ## Data Preparation
 
 ---
-
-
 ### Preparation Dataframe
 
 Filter dataframe only for Germany
@@ -577,13 +594,31 @@ Filter dataframe only for Germany
 df_Germany <- filter(df_master, Country=="Germany")
 ```
 
-
+There are diffrent objects that can be used lateron:
+* tsibbles
+* vectors -> timeseries
+* dataframes -> timeseries
 ---
 
+### Data transformation into tsibble
 
+A time series can be thought of as a list of numbers (the measurements), along with some information about what times those numbers were recorded (the index). This information can be stored as a tsibble object in R.
+
+```{r}
+tsibble_Germany <- as_tsibble(df_Germany, index=Year)
+class(tsibble_Germany)
+```
+
+```{r}
+tsibble_Germany
+
+```
+
+
+---
 ### Data transformation into vectors and time series   
 
-In order to be able to work with the partial data sets later, we split the respective dataframe into individual vectors for Crime Index and Year.
+In order to be able to work with the partial data sets later, we split the respective dataframe into individual vectors for different indexes.
 
 
 ```{r}
@@ -618,6 +653,10 @@ crimeGermanyTS
 class(crimeGermanyTS)
 ```
 
+
+---
+### Data transformation from dataframes into time series   
+
 Converting the dataframe into a times series (dataframe is coerced to a numeric matrix)
 ```{r}
 GermanyTS <- ts(df_Germany, start=2012, end=2019, frequency=1)
@@ -625,10 +664,83 @@ GermanyTS
 ```
 
 ---
+class: center, middle
 
-### Plotting times series
+## Model choice
 
-```{r}
+---
+There are many different models to analyize times series. 
+
+How do we chose the right model?
+1. Visual inspection: is there seasonality or trend?
+2. Is decomposition technique additive or multiplicative? (Log tranformation if required)
+3. Chosing the appropriate model, e.g. 
+
+Model                                  |   Seasonal?  |    Trend?    | Correlations?
+---------------------------------------|--------------|--------------|--------------
+Simple Moving Average Smoothing        |      no      |     yes      |      no 
+Seasonal Adjustments                   |      yes     |     yes      |      no 
+Simple Exponential Smoothing           |      no      |     yes      |      no 
+Holts Exponential Smoothing            |      no      |     yes      |      no 
+Holt-Winters Exponential Smoothing     |      yes     |     yes      |      no 
+ARIMA                                  |      yes     |     yes      |      yes 
+
+4. Testing of the model
+5. Verification of the model performance
+
+according to [Data Science - Part X - Time Series Forecasting](https://www.youtube.com/watch?v=msFkHl7P28k&t=1922s) by Derek Kane
+
+---
+
+
+### Visual inspection
+
+---
+
+#### Crime Index Germany
+
+```{r echo=FALSE}
+autoplot(tsibble_Germany,`Crime Index`, col="black") +
+    labs(title = "Crime Index Germany", subtitle = "Years 2012-2019") +
+    xlab("Year")
+
+```
+
+---
+
+#### Cost of Living Index Germany
+```{r echo=FALSE}
+autoplot(tsibble_Germany,`Cost of Living Index`, col="red") +
+    labs(title = "Cost of Living Index Germany", subtitle = "Years 2012-2019") +
+    xlab("Year")
+
+```
+
+
+---
+
+#### Health Care Index Germany
+```{r echo=FALSE}
+autoplot(tsibble_Germany,`Health Care Index`, col="orange") +
+    labs(title = "Health Care Index Germany", subtitle = "Years 2012-2019") +
+    xlab("Year")
+
+```
+
+---
+
+
+#### Pollution Index Germany
+```{r echo=FALSE}
+autoplot(tsibble_Germany,`Pollution Index`, col="purple") +
+    labs(title = "Pollution Index Germany", subtitle = "Years 2012-2019") +
+    xlab("Year")
+
+```
+
+---
+#### Overall overview 
+```{r echo=FALSE}
 par(mfrow=c(2,2))
 plot(crimeGermanyTS, col="black", main="Crime Index Germany")
 plot(costOfLivingGermanyTS, col="red", main="Cost of Living Index Germany")
@@ -637,27 +749,43 @@ plot(pollutionGermanyTS, col="purple", main="Pollution Index Germany")
 
 ```
 
-```{r, warning=FALSE}
+----
+
+#### Correlations
+
+```{r echo=FALSE}
 library(GGally)
 ggCorAnalysis <- select(df_analysis_numeric, `Health Care Index`,`Pollution Index`,`Crime Index`,`Cost of Living Index`)
 GGally::ggpairs(ggCorAnalysis)
 ```
 
 ---
+#### Conclusion
+
+As there are no significant correlations and no seasonal components, models like 
+* Simple forecasting methods
+* Simple Moving Average Smoothing
+* Simple Exponential Smoothing
+* Holts Exponential Smoothing  
+
+can be used.
+
+---
+class: center, middle
 
 ## Modelling
 
 ---
-
+class: center, middle
 ### Some simple forecasting methods
 
 ---
 
 #### Average method
 
-The forecasted values are equal to the average (or “mean”) of the historical data. 
+The forecasted values are equal to the average (or **“mean”**) of the historical data. 
 h is the time horizon for the forecast.
-```{r}
+```{r echo=FALSE}
 meanf(crimeGermanyTS, h=3)
 ```
 
@@ -666,15 +794,15 @@ meanf(crimeGermanyTS, h=3)
 
 #### Naïve method (random walk forecasts)
 
-The last value of the historical data is set as predicted value. 
+The **last value** of the historical data is set as predicted value. 
 h is the time horizon for the forecast.
-```{r}
+```{r echo=FALSE}
 naive(crimeGermanyTS, h=3)
 ```
 
-Variation: *Drift method*
-Change over time (=drift) is the average change in the historical data.
-```{r}
+Variation: **Drift method**   
+Change over time (=drift) is the **average change** in the historical data.
+```{r echo=FALSE}
 driftCrime <- rwf(crimeGermanyTS, h=3, drift=TRUE)
 driftCrime
 
@@ -684,7 +812,7 @@ driftCrime
 ---
 #### Plotting the forecasts
 
-```{r}
+```{r echo=FALSE}
 crimeGermanyPlot <- window(crimeGermanyTS,start=2012,end=2019)
 # Plot some forecasts
 autoplot(crimeGermanyPlot) +
@@ -706,7 +834,8 @@ autoplot(crimeGermanyPlot) +
 
 For the three methods Mean, Naïve Method and Drift Method the Accuracy can be deducted from comparison of forecasts 2017-2019 and real data.
 
-```{r}
+
+```{r include=FALSE}
 crime1 <- meanf(window(crimeGermanyTS, start=2012, end=2016), h=3)
 crime2 <- rwf(window(crimeGermanyTS, start=2012, end=2016), h=3)
 crime3 <- rwf(window(crimeGermanyTS, start=2012, end=2016), drift=TRUE, h=3)
@@ -715,31 +844,64 @@ autoplot(crimeGermanyPlot) +
   autolayer(crime2, PI=FALSE, series="Naïve") +
   autolayer(crime3, PI=FALSE, series="Naïve Drift Method") +
   xlab("Year") + ylab("Crime Index") +
-  ggtitle("Crime Index Germany") +
+  ggtitle("Forecast for Crime Index Germany") +
   guides(colour=guide_legend(title="Forecast"))
 ```
 
 
+
+```{r echo=FALSE, warning=FALSE}
+# Set training data from 2012 to 2016
+train <- select(tsibble_Germany,`Crime Index`) %>% filter_index("2012" ~ "2016")
+# Fit the models
+crime_fit <- train %>%
+  model(
+    `Mean` = MEAN(`Crime Index`),
+    `Naïve` = NAIVE(`Crime Index`),
+    `Drift` = NAIVE(`Crime Index` ~ drift())
+  )
+# Generate forecasts for 3 years
+crime_fc <- crime_fit %>% forecast(h=3)
+# Plot forecasts against actual values
+crime_fc %>%
+  autoplot(train, level = NULL) +
+    autolayer(filter_index(select(tsibble_Germany,`Crime Index`), "2016" ~ "2019"), color = "black") +
+    ggtitle("Forecast for Crime Index Germany") +
+    xlab("Year") + ylab("Crime Index") +
+    guides(colour=guide_legend(title="Forecast"))
+```
+
+
+
+
 ---
 
-### Autocorrelation
-We measure the relationship between: 
-yt and yt-1
-yt and yt-2
-yt and yt-3
+### Autocorrelation  
+Autocorrelation measures the linear relationship between lagged values of a time series.
+This means we measure the relationship between: 
+y~t~ and y~t-1~
+y~t~ and y~t-2~
+y~t~ and y~t-3~
 etc.
 
----
-```{r}
-lag.plot(crimeGermanyTS,lags=7,do.lines=FALSE)
+
+```{r echo=FALSE}
+#lag.plot(crimeGermanyTS,lags=7,do.lines=FALSE) # Variante 1
+
+tsibble_Germany %>%  gg_lag(`Crime Index`, geom="point")  # Variante 2
 ```
+
 The autocorrelations are the correlations associated with these scatterplots.
+The highest positiv relationship is at lags 1 and 2.
 
 ---
 
-The autocorrelations coefficients are displayed by the autocorrelation function ggAcf function
-```{r}
-ggAcf(crimeGermanyTS)
+The autocorrelations coefficients are displayed by the autocorrelation function ggAcf function  
+
+
+```{r echo=FALSE}
+# ggAcf(crimeGermanyTS) # Variante 1
+autoplot(ACF(tsibble_Germany, `Crime Index`)) # Variante 2
 
 ```
 
@@ -748,24 +910,24 @@ In our case no correlation is significant.
 Time series that show no autocorrelation are called *white noise*. 
 
 ---
-### Non-seasonal ARIMA models
+### Linear Model
+
+First we train the model with TSLM() (time series linear model).
 
 ```{r}
-
+fit <- tsibble_Germany %>%  model(trend_model = TSLM(`Crime Index` ~ trend()))
+fit
 ```
 
 
+---
 
+class: center
 
-```{r}
-
-```
-
-
-
-
-```{r}
-
+```{r echo=FALSE}
+fit %>% forecast(h = "3 years") %>%
+    autoplot(tsibble_Germany) +
+    ggtitle("Crime Index for Germany") + ylab("Crime Index")
 ```
 
 

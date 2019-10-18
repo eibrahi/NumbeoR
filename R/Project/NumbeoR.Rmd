@@ -171,7 +171,7 @@ Reading in the JSON files
 pathToDataJson <- paste0(path, "daten/dataImport.json")
 pathToTableJson <- paste0(path, "daten/tableNamesImport.json")
 
-# reeding the dataImport.json
+# reeding the dataImport and tableNames json
 my_files <- fromJSON(file = pathToDataJson)
 my_tables <- fromJSON(file= pathToTableJson)
 

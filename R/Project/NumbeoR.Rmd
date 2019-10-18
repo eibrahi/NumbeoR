@@ -168,10 +168,12 @@ Reading in the JSON files
 
 ```{r echo=TRUE}
 # generate full path to the dataImport.json
-pathToJson <- paste0(path, "daten/dataImport.json")
+pathToDataJson <- paste0(path, "daten/dataImport.json")
+pathToTableJson <- paste0(path, "daten/tableNamesImport.json")
 
 # reeding the dataImport.json
-my_files <- fromJSON(file = pathToJson)
+my_files <- fromJSON(file = pathToDataJson)
+my_tables <- fromJSON(file= pathToTableJson)
 
 # creating lists
 my_data <- list()
@@ -189,19 +191,7 @@ for (i in 1 : length(my_files)) {
     df_my_data[[i]] <- as.data.frame(t(df_temp_my_data[[i]]))  
     
     # Writing data into PostgreSQL
-    if (i <= 8) {
-        dbWriteTable(con, "cost_of_living", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
-    } else if (i > 8 && i <= 16) {
-        dbWriteTable(con, "crime", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
-    } else if (i > 16 && i <= 24) {
-        dbWriteTable(con, "health_care", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
-    } else if (i > 24 && i <= 32) {
-        dbWriteTable(con, "pollution", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
-    }else if (i > 32 && i <= 40) {
-        dbWriteTable(con, "property_investment", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
-    }else {
-        dbWriteTable(con, "traffic", value = df_my_data[[i]], append = TRUE, row.names = FALSE)
-    }
+    dbWriteTable(con, my_tables[i], value = df_my_data[[i]], append = TRUE, row.names = FALSE)
 }
 ```
 

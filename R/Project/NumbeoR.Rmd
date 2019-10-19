@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ![](pics/Swimlane.PNG)
 
 ---
-# Loading of required libraries
+# Loading of Required Libraries
 
 ```{r, message=FALSE}
 library(tidyverse)
@@ -52,11 +52,11 @@ library(tsibble)                       # tsibble object used for forecasting
 ---
 class: center, middle
 
-# Setup of the PostgreSQL database
+# Setup of the PostgreSQL Database
 
 ---
 
-## Establishing connection to PostgreSQL
+## Establishing Connection to PostgreSQL
 
 ---
 ```{r echo=TRUE}
@@ -86,12 +86,12 @@ rm(pw)
 
 ---
 
-## Creation of database
+## Creation of Database
 A database with the name "NumbeoR" in PostgreSQL has to be created manually. 
 
 ---
 
-## Creation of tables
+## Creation of Tables
 
 ```{sql connection=con}
 DROP Table cost_of_living, crime, health_care, pollution, property_investment, traffic
@@ -207,13 +207,51 @@ One could export with sQL codes.
 We use R codes instead.
 
 ---
-class: center, middle
+## SQL Enviroment
 
-## R code
+---
+### SQL Queries
+
+#### Cost of Living in Germany
+
+```{sql connection=con}
+SELECT * 
+  FROM cost_of_living
+  WHERE "Country" = 'Germany';
+```
+
+---
+#### Countries with very high CO2 pollutions in 2019
+
+```{sql connection=con}
+SELECT "Country", "CO2 Emission Index"
+  FROM traffic
+  WHERE "Year"=2019 AND "CO2 Emission Index" > 6000
+  ORDER BY "CO2 Emission Index" DESC;
+```
 
 ---
 
-Export of the different tables with the help of dbGetQuery function
+#### Averge Crime Index from 2012 - 2019
+
+```{sql connection=con}
+SELECT "Year", AVG("Crime Index")
+  FROM crime
+  GROUP BY "Year"
+  ORDER BY "Year" ASC;
+  
+```
+
+
+---
+class: center, middle
+
+## R Enviroment
+
+---
+### Data Import from PostgreSQL
+
+Import of the different tables with the help of *dbGetQuery* function
 
 ```{r}
 df_cost_of_living_postgres <- dbGetQuery(con, "SELECT * from cost_of_living")
@@ -225,44 +263,32 @@ df_traffic_postgres <- dbGetQuery(con, "SELECT * from traffic")
 ```
 
 ---
-Joining the data to one master dataframe
+### Joining Dataframes (Tables)
+
+Joining the data to one master dataframe with a *nested full_join* function
 
 ```{r}
 df_master <- full_join(full_join(full_join(full_join(full_join(df_cost_of_living_postgres, df_crime_postgres, by = c("Country", "Year")),df_health_care_postgres, by = c("Country", "Year")), df_pollution_postgres, by = c("Country", "Year")), df_property_investment_postgres, by = c("Country", "Year")), df_traffic_postgres, by = c("Country", "Year"))
+```
 
 
+```{r echo=FALSE}
+# df_master <- distinct(df_master) # In case there are duplicates in the PostgreSQL (e.g. multiple writing of the same data) this chunk can be run
+
+```
+
+```{r echo=FALSE}
 df_master
 ```
 
-```{r}
-df_master <- distinct(df_master)
-
-```
-
-```{r}
-df_master
-```
-
 ---
 
-Filtering the master dataframe for country 'Germany'
-
-```{r}
-filter(df_master, Country=="Germany")
-```
-
----
-class: center, middle
-
-## SQL code
-
----
 class: center, middle
 
 # Data Understanding and Preparation
 
 ---
-## Approach:
+## General Approach
 
 * Detailed inspection of data and data structure
 * Selection of content to be used afterwards
@@ -273,7 +299,7 @@ class: center, middle
 ---
 class: center, middle
 
-## Data inspection
+## Data Inspection
 
 ---
 
@@ -337,7 +363,7 @@ glimpse(df_master_continent)
 ---
 class: center, middle
 
-## Data selection
+## Data Selection
 
 ---
 
@@ -371,7 +397,7 @@ class: center, middle
 ## Data Cleansing
 
 ---
-### Deletion of NA values
+### Deletion of NA Values
 
 Sum of NA values can be ascertained as following:
 ```{r}
@@ -432,6 +458,15 @@ df_analysis_numeric <- select(df_master_numeric, 'Cost of Living Index', 'Rent I
 
 ```{r}
 sum(is.na(df_analysis_numeric))
+
+```
+
+---
+## Data Export for Shiny
+
+```{r}
+write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
+write.csv(df_analysis_clean,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/CleanDF.csv", row.names = FALSE)
 ```
 
 ---
@@ -445,7 +480,7 @@ class: center, middle
 ## Correlations
 
 ---
-### Correlation matrix
+### Correlation Matrix
 
 First, a correlation matix will be generated with the help of the corrplot package
 
@@ -454,16 +489,17 @@ First, a correlation matix will be generated with the help of the corrplot packa
 corrplot(cor(df_analysis_numeric), method = "circle")
 ```
 
+---
 
 
+The *Cost of Living* Index is a dependent variable of the *Rent Index* and the *Local Purchasing Power Index*. So further correlation analyses are not reasonable. 
 
-The Cost of Living Index is a dependent variable of the Rent Index and the Local Purchasing Power Index. So further correlation analyses are not reasonable. 
+But we see that the *Pollution Index* could be negatively correlated with the *Local Purchasing Power Index* and with the *Cost of Living Index*. 
 
-But we see that the Pollution Index could be negatively correlated with the Local Purchasing Power Index and with the Cost of Living Index. 
+The *CO2 Emission Index* could be positively correlated with *Gross Rerntal Yields* and *Crime Index*.  
 
-The CO2 Emission Index could be positively correlated with Gross Rerntal Yields and Crime Index.  
+Furthermore, the *Health Care Index* seems to be positively correlated with the *Local Purchasing Power Index*. 
 
-Furthermore, the Health Care Index seems to be positively correlated with the Local Purchasing Power Index. 
 This will be examined in the following
 
 --- 
@@ -479,51 +515,60 @@ corN
 ```
 
 
-see http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
+see also [sthda](http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software)
 
 ---
 
 ### Pollution vs. Cost of Living
 
 Here, we show the (negative) correlation of two variables Polltion Index and Cost of Living Index:
-```{r}
+```{r echo=FALSE}
 corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Cost of Living Index`)))
 corN
 ```
 
 ---
 
-### CO2 Emission  vs. Gross Rental Yield
+### CO2 Emission  vs. Crime
 
 Here, we show the (positive) correlation of variable CO2 Emission Index and the two indexes for Gross Rental Yields:
-```{r}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Gross Rental Yield City Centre`)))
+```{r echo=FALSE}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Crime Index`)))
 corN
 ```
 
-```{r}
+```{r echo=FALSE}
 corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Gross Rental Yield Outside of Centre`)))
 corN
 ```
 
-
 ---
 
-### Health Care  vs. Local Purchasing Power
+### CO2 Emission  vs. Local Purchasing Power
 
 The correlation of the two variables Health Care Index and the Local Purchasing Power:
-```{r}
+```{r echo=FALSE}
 corN <- rcorr(as.matrix(select(df_analysis_numeric,`Health Care Index`,`Local Purchasing Power Index`)))
 corN
 ```
 
 ---
 
-### Visualization
+### Health Care  vs. Local Purchasing Power
+
+The correlation of the two variables Health Care Index and the Local Purchasing Power:
+```{r echo=FALSE}
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Health Care Index`,`Local Purchasing Power Index`)))
+corN
+```
 
 ---
 
-#### Boxplots for Crime Index
+## Visualizations
+
+---
+
+### Boxplots for Crime Index
 
 ```{r echo=FALSE}
 crime_plot_2019 <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=`Crime Index`)) +
@@ -535,7 +580,7 @@ ggplotly(crime_plot_2019)
 
 
 ---
-#### Scatter Plot
+### Scatter Plot
 
 ```{r echo=FALSE, warning=FALSE}
 crime_health_plot_2019 <- ggplot(df_analysis_clean_2019) +
@@ -550,7 +595,7 @@ ggplotly(crime_health_plot_2019)
 ---
 class: center, middle
 
-# Forecasting
+# Forecasting / Times Series Analysis
 
 
 ---
@@ -590,7 +635,7 @@ There are diffrent objects that can be used lateron:
 * dataframes -> timeseries
 ---
 
-### Data transformation into tsibble
+### Data Transformation into Tsibble
 
 A time series can be thought of as a list of numbers (the measurements), along with some information about what times those numbers were recorded (the index). This information can be stored as a tsibble object in R.
 
@@ -607,7 +652,7 @@ tsibble_Germany
 
 
 ---
-### Data transformation into vectors and time series   
+### Data Transformation into Vectors and Time Series   
 
 In order to be able to work with the partial data sets later, we split the respective dataframe into individual vectors for different indexes.
 
@@ -628,8 +673,8 @@ pollutionVector
 ```
 
 
-```{r}
-class(crimeGermanyVector)
+```{r include=FALSE}
+class(crimeGermanyVector) # Class of the vector
 ```
 
 ---
@@ -646,18 +691,9 @@ class(crimeGermanyTS)
 
 
 ---
-### Data transformation from dataframes into time series   
-
-Converting the dataframe into a times series (dataframe is coerced to a numeric matrix)
-```{r}
-GermanyTS <- ts(df_Germany, start=2012, end=2019, frequency=1)
-GermanyTS
-```
-
----
 class: center, middle
 
-## Model choice
+## Model Choice
 
 ---
 There are many different models to analyize times series. 
@@ -684,7 +720,7 @@ according to [Data Science - Part X - Time Series Forecasting](https://www.youtu
 ---
 
 
-### Visual inspection
+### Visual Inspection
 
 ---
 
@@ -934,7 +970,7 @@ accuracy(fit_ets2)
 ```
 
 ---
-
+#### Trend forecasts
 ```{r}
 fc_ets2 %>%
   autoplot(tsibble_Germany) +
@@ -993,7 +1029,7 @@ class: center, middle
 
 ---
 
-Could there be a linearity?
+Could there exist a linearity?
 
 ```{r warning=FALSE}
 tsibble_Germany %>% select(`Crime Index`) %>% 

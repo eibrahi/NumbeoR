@@ -2,11 +2,11 @@ Projektbeschreibung
 - Projektziel
 - Kurze Beschreibung Numbeo
 - Vorgehen: Webscraping in Python bis hin zu Shiny-App
+
 Python -> JSON -> Import R -> Prep1 -> Write into PostgreSQL -> Read from PostgreSQL -> Prep2 => Master Dataframe
 1) EDA (Explorative Datenanalyse)
 2) Forecasting / Times Series
 3) Dashboarding (Shiny)
-
 - Darstellung Architektur
 Zentrale Repository Github
 ConfigFile

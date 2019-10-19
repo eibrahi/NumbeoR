@@ -15,12 +15,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
----
-class: center, middle
-
-# Project Description
-
 ---
 
 # Loading of required libraries
@@ -48,6 +42,29 @@ library(tsibble)                       # tsibble object used for forecasting
 
 
 ```
+---
+```{r echo=TRUE}
+# load configfile
+configFile <- fromJSON(file="configFile.json")
+path <- configFile[1]
+```
+
+---
+class: center, middle
+
+# Project Description
+
+```{r}
+
+```
+
+```{r}
+pathToPic <- paste0(path, "daten/Swimlane.png")
+
+
+```
+Bild: ![](C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/Swimlane.png)
+
 
 ---
 class: center, middle
@@ -59,11 +76,6 @@ class: center, middle
 ## Establishing connection to PostgreSQL
 
 
-```{r echo=TRUE}
-# load configfile
-configFile <- fromJSON(file="configFile.json")
-path <- configFile[1]
-```
 
 
 ```{r echo=TRUE}
@@ -163,8 +175,7 @@ class: center, middle
 # Data import
 
 ---
-
-Reading in the JSON files
+The basic activity in the beginning of the project is to read in the JSON files containing scraped data from NumbeoR, to create dataframe and finally memorizing the data into PostgreSQL.
 
 ```{r echo=TRUE}
 # generate full path to the dataImport.json

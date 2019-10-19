@@ -41,7 +41,7 @@ library(GGally)                        # visualizations of correlations
 
 library(Hmisc)                         # calculation of correlations
 
-library(fpp)                           # forecasting/times series
+#library(fpp)                           # forecasting/times series
 library(fpp2)                          # forecasting/times series
 library(fpp3)                          # forecasting/times series
 library(tsibble)                       # tsibble object used for forecasting
@@ -749,7 +749,11 @@ ggCorAnalysis <- select(df_analysis_numeric, `Health Care Index`,`Pollution Inde
 GGally::ggpairs(ggCorAnalysis)
 ```
 
+
 ---
+
+
+
 #### Conclusion
 
 As there are no significant correlations and no seasonal components, models like 
@@ -863,6 +867,65 @@ crime_fc %>%
 
 
 
+---
+class: center, middle
+### Simple exponential smoothing
+
+---
+#### General
+
+Exponential smoothing models:
+* weighted averages of past observations  
+* the older the (past) observation is the (exponentially) lower is the weigh
+
+Simplest model is the **Simple Exponential Smoothing model (SES)**.  
+It is suitable for forecasting data with no clear trend or seasonal pattern.
+
+---
+
+#### Flat forecasts
+Simple exponential smoothing has a “flat” forecast  
+
+```{r}
+crimeGermanySes <- window(crimeGermanyTS,start=2012,end=2019)
+fc_ses <- ses(crimeGermanySes, h=3)
+fc_ses
+
+```
+
+---
+Optimazation of the model:
+*unknown parameters and the initial values for any exponential smoothing method can be estimated by for example minimizing the SSE
+```{r}
+# Estimate parameters
+fit_ets <- tsibble_Germany %>%
+  model(ETS(`Crime Index` ~ error("A") + trend("N") + season("N"), opt_crit = "mse"))
+fc_ets <- fit_ets %>%
+  forecast(h = 3)
+
+# Accuracy of one-step-ahead training errors
+accuracy(fit_ets)
+```
+
+---
+
+```{r}
+fc_ets %>%
+  autoplot(tsibble_Germany) +
+  geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets)) +
+  ylab("Crime Index") + xlab("Year")
+```
+ In red the one-step-ahead fitted values plotted
+
+
+---
+class: center, middle
+### Simple moving average
+
+---
+#### General
+
+The Moving average model creates predictions based on the average of a subset of past values. 
 
 ---
 
@@ -900,41 +963,61 @@ In our case no correlation is significant.
 Time series that show no autocorrelation are called *white noise*. 
 
 ---
+class: center, middle
+
 ### Linear Model
+
+---
+
+Could there be a linearity?
+
+```{r warning=FALSE}
+tsibble_Germany %>% select(`Crime Index`) %>% 
+  ggplot(aes(x=Year, y=`Crime Index`)) +
+    ylab("Crime Index)") +
+    xlab("Years") +
+    geom_point() +
+    geom_smooth(method="lm", se=FALSE)
+```
+
+---
+
+```{r}
+tsibble_Germany %>%
+  model(TSLM(`Crime Index` ~ Year)) %>%
+  report()
+```
+
+Contraints for our use case:
+* In year 0 we certainly did not have a crime index of -4199
+* Furtermore, an improvement of the crime index is possible and probable over a long period leading to a non-linearity
+---
 
 First we train the model with TSLM() (time series linear model).
 
 ```{r}
-fit <- tsibble_Germany %>%  model(trend_model = TSLM(`Crime Index` ~ trend()))
-fit
+fit_tslm <- tsibble_Germany %>%  model(trend_model = TSLM(`Crime Index` ~ trend()))
+
 ```
 
 
 ---
-
-class: center
+Assuming that the linear development will continue we plot the scenario funnel
 
 ```{r echo=FALSE}
-fit %>% forecast(h = "3 years") %>%
+fit_tslm %>% forecast(h = "3 years") %>%
     autoplot(tsibble_Germany) +
     ggtitle("Crime Index for Germany") + ylab("Crime Index")
 ```
 
 
 
-```{r}
 
-```
+---
+class: center, middle
+## Overall conclusion
 
+The application of pure data-driven models based on historical data is not appropriate to come to conclusions how the crime index will develop in future.  
+Furthermore domain knowledge is required to come to conclusions about the reasons for the past increase and how to improve the situation.  
 
-
-```{r}
-
-```
-
-
-
-```{r}
-
-```
 

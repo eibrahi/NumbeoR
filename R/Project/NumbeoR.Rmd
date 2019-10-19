@@ -15,8 +15,14 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 ---
 
+# Project Description
+
+![](pics/Swimlane.PNG)
+
+---
 # Loading of required libraries
 
 ```{r, message=FALSE}
@@ -42,29 +48,6 @@ library(tsibble)                       # tsibble object used for forecasting
 
 
 ```
----
-```{r echo=TRUE}
-# load configfile
-configFile <- fromJSON(file="configFile.json")
-path <- configFile[1]
-```
-
----
-class: center, middle
-
-# Project Description
-
-```{r}
-
-```
-
-```{r}
-pathToPic <- paste0(path, "daten/Swimlane.png")
-
-
-```
-Bild: ![](C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/Swimlane.png)
-
 
 ---
 class: center, middle
@@ -75,6 +58,12 @@ class: center, middle
 
 ## Establishing connection to PostgreSQL
 
+---
+```{r echo=TRUE}
+# load configfile
+configFile <- fromJSON(file="configFile.json")
+path <- configFile[1]
+```
 
 
 
@@ -616,6 +605,7 @@ tsibble_Germany
 ```
 
 
+
 ---
 ### Data transformation into vectors and time series   
 
@@ -681,7 +671,7 @@ Model                                  |   Seasonal?  |    Trend?    | Correlati
 ---------------------------------------|--------------|--------------|--------------
 Simple Moving Average Smoothing        |      no      |     yes      |      no 
 Seasonal Adjustments                   |      yes     |     yes      |      no 
-Simple Exponential Smoothing           |      no      |     yes      |      no 
+Simple Exponential Smoothing           |      no      |     yes/no   |      no 
 Holts Exponential Smoothing            |      no      |     yes      |      no 
 Holt-Winters Exponential Smoothing     |      yes     |     yes      |      no 
 ARIMA                                  |      yes     |     yes      |      yes 
@@ -928,6 +918,29 @@ fc_ets %>%
 ```
  In red the one-step-ahead fitted values plotted
 
+---
+Including an (additive) trend perspective will change the forecast:
+
+*unknown parameters and the initial values for any exponential smoothing method can be estimated by for example minimizing the SSE
+```{r}
+# Estimate parameters
+fit_ets2 <- tsibble_Germany %>%
+  model(ETS(`Crime Index` ~ error("A") + trend("A") + season("N"), opt_crit = "mse"))
+fc_ets2 <- fit_ets2 %>%
+  forecast(h = 3)
+
+# Accuracy of one-step-ahead training errors
+accuracy(fit_ets2)
+```
+
+---
+
+```{r}
+fc_ets2 %>%
+  autoplot(tsibble_Germany) +
+  geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets2)) +
+  ylab("Crime Index") + xlab("Year")
+```
 
 ---
 class: center, middle

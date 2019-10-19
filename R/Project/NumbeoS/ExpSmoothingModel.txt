@@ -1,0 +1,40 @@
+library(fpp2)                          # forecasting/times series
+library(fpp3)                          # forecasting/times series
+library(tsibble)                       # tsibble object used for forecasting
+
+library(plotly)                        # visualizations
+
+```{r}
+df_Germany <- filter(df_analysis_clean, Country=="Germany")
+```
+
+```{r}
+tsibble_Germany <- as_tsibble(df_Germany, index=Year)
+class(tsibble_Germany)
+```
+none ("N"), additive ("A"), multiplicative ("M")
+
+opt_crit
+"lik" log-likelihood 
+"mse" (Mean Square Error), 
+"amse" (Average MSE over first nmse forecast horizons), 
+"sigma" (Standard deviation of residuals), or 
+"mae" (Mean Absolute Error)
+
+```{r}
+# Estimate parameters
+fit_ets <- tsibble_Germany %>%
+  model(ETS(`Crime Index` ~ error("A") + trend("N") + season("N"), opt_crit = "mse"))
+fc_ets <- fit_ets %>%
+  forecast(h = 3)
+
+# Accuracy of one-step-ahead training errors
+accuracy(fit_ets)
+```
+
+```{r}
+fc_ets %>%
+  autoplot(tsibble_Germany) +
+  geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets)) +
+  ylab("Crime Index") + xlab("Year")
+```

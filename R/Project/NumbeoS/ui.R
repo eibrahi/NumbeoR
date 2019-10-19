@@ -10,58 +10,57 @@
 library(shiny)
 
 # Define UI for application that draws a histogram
-shinyUI(
-    fluidPage(
-        navlistPanel("NumbeoR",
-            tabPanel("Plots",
-    
-                # Application title
-                titlePanel("Crime Index vs. Health Care Index"),
-            
-                # Sidebar with a slider input for number of bins
-                sidebarLayout(
-                    sidebarPanel(
-                        selectInput("Year","Chose the year:",c("2012", "2013","2014","2015","2016","2017","2018","2019")
-                        ),
+shinyUI(fluidPage(navlistPanel("NumbeoR",
+                               
+                                
+                               
+                               tabPanel("Forecast analysis",
                     
-                        sliderInput("Year2","Chose the year:",
-                                min=2012, max=2019, value = 2012, step = 1, 
-                                animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL)
-                        )
-                
-                    ),
-                
-                # Show a plot of the generated distribution
-                    mainPanel(
-                        plotOutput("numbPlot")
-                    )
-                )
-            ),
+                                    # Application title
+                                    titlePanel("Crime Index"),
+                    
+                                    # Sidebar with a slider input for number of bins
+                                    sidebarLayout(
+                                        sidebarPanel(
+                                            selectInput("Year","Chose the year:",c("2012", "2013","2014","2015","2016","2017","2018","2019")
+                                            )
+                                        ),
+                    
+                                        # Show a plot of the generated distribution
+                                        mainPanel(plotOutput("Forecast")
+                                        )
+                                    )
+                                ),
+                    
+                               
+                               
+                               
+                                
+                               tabPanel("Plots",
+                                         
+                                    # Application title
+                                    titlePanel("Crime Index vs. Health Care Index"),
+                                         
+                                    # Sidebar with a slider input for number of bins
+                                    sidebarLayout(
+                                        sidebarPanel(
+                                            sliderInput("YearBub","Chose the year:",min=2012, max=2019, value = 2012, step = 1, 
+                                                             animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL)
+                                            )    
+                                        ),
+                                         
+                                        # Show a plot of the generated distribution
+                                        mainPanel(plotOutput("numbPlot")
+                                        )
+                                    )
+                                ),
             
-            tabPanel("Placeholder",
-                     # Application title
-                     titlePanel("Crime Index vs. Health Care Index"),
-                     
-                     # Sidebar with a slider input for number of bins
-                     sidebarLayout(
-                         sidebarPanel(
-                             selectInput("Year","Chose the year:",c("2012", "2013","2014","2015","2016","2017","2018","2019")
-                             ),
-                             
-                             sliderInput("Year2","Chose the year:",
-                                         min=2012, max=2019, value = 2012, step = 1, 
-                                         animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL)
+                               
+        
+                               widths = c(2, 10)
                              )
-                             
-                         ),
-                         
-                         # Show a plot of the generated distribution
-                         mainPanel(
-                             plotOutput("numbPlot2")
-                         )
-                     )
-            )
-            
-        )
+                  
+                  
     )
 )
+

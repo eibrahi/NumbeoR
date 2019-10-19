@@ -12,7 +12,7 @@ library(shiny)
 # Define UI for application that draws a histogram
 shinyUI(
     fluidPage(
-        navbarPage("NumbeoR",
+        navlistPanel("NumbeoR",
             tabPanel("Plots",
     
                 # Application title

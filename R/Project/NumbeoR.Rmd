@@ -578,6 +578,47 @@ The correlation of the two variables Health Care Index and the Local Purchasing 
 corN <- rcorr(as.matrix(select(df_analysis_numeric,`Health Care Index`,`Local Purchasing Power Index`)))
 corN
 ```
+  
+---
+
+### Crime Index vs. Number of Refugees
+
+Correlation of perceived crimes and the estimated number refugees in Germany
+(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
+
+```{r}
+# Importing data for number of asylum seekers per year from CSV file (data comes from statista)
+asylumSeekerGer <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/asylum_seeker_Germany.csv",header=TRUE, sep=";")
+colnames(asylumSeekerGer) <- c("Year", "AsylumSeekerGermany", "AsylumSeekerGermanyCum")
+
+# Join with Dataframe for Germany
+df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
+
+# Correlation analysis
+corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, `Crime Index`, `AsylumSeekerGermanyCum`)))
+corN
+```
+see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
+  
+---
+### Crime Index vs. Real Crime Rates
+
+Correlation of perceived crimes and number of registered crime rates. 
+(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
+
+```{r}
+# Importing data for number of registered crimes (data comes from statista)
+numberCrimesGer <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crimeStatisticsGermany.csv",header=TRUE, sep=";")
+colnames(numberCrimesGer) <- c("Year", "number_crimes")
+
+# Join with Dataframe for Germany
+df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
+
+# Correlation analysis
+corN <- rcorr(as.matrix(select(df_corCrimePerRealGer, `Crime Index`, `number_crimes`)))
+corN
+```
+see [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
 
 ---
 
@@ -1112,50 +1153,10 @@ Furthermore domain knowledge is required to come to conclusions about the reason
 
 
 
----
-#### Crime Index vs. Number of Refugees
-
-Correlation of perceived crimes and the estimated number refugees in Germany
-(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
-
-```{r}
-# Importing data for number of asylum seekers per year
-asylumSeekerGer <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/asylum_seeker_Germany.csv",header=TRUE, sep=";")
-colnames(asylumSeekerGer) <- c("Year", "AsylumSeekerGermany", "AsylumSeekerGermanyCum")
-
-# Join with Dataframe for Germany
-df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
-
-# Korrelation analysis
-corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, `Crime Index`, `AsylumSeekerGermanyCum`)))
-corN
-```
-see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
-
-
----
-#### Crime Index vs. Real Crime Rates
-
-Correlation of perceived crimes and number of registered crime rates. 
-(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
-
-```{r}
-numberCrimesGer <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crimeStatisticsGermany.csv",header=TRUE, sep=";")
-colnames(numberCrimesGer) <- c("Year", "number_crimes")
-```
-see [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
---- 
-
-```{r}
-df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
-```
-
-```{r}
-glimpse(df_corCrimePerRealGer)
-```
 
 
 ```{r}
-corN <- rcorr(as.matrix(select(df_corCrimePerRealGer, `Crime Index`, `number_crimes`)))
-corN
+
 ```
+
+

@@ -47,12 +47,18 @@ shinyUI(fluidPage(navlistPanel("NumbeoR",
                                     sidebarLayout(
                                         sidebarPanel(
                                             sliderInput("YearBub","Chose the year:",min=2012, max=2019, value = 2012, step = 1, 
-                                                             animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL),
+                                                             animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL)
+                                            ),
                           
                                             
-                                            selectInput(xVar, "Chose the x Variable", ) 
-                                        )
+                                            selectInput("xVar", "Chose the x Variable", c("PLI", "CRI", "HCI", "CLI", "RTI") 
+                                            ), 
+                                        
+                                            selectInput("yVar", "Chose the y Variable", c("PLI", "CRI", "HCI", "CLI", "RTI") 
+                                            ),
                                             
+                                            selectInput("bubble", "Chose the size Variable", c("PLI", "CRI", "HCI", "CLI", "RTI") 
+                                            ) 
                                             
                                         ),
                                         

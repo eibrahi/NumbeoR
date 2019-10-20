@@ -20,8 +20,9 @@ packageVersion('plotly')
 
 df_master <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/MasterDF.csv", header=TRUE)
 df_clean <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/CleanDF.csv", header=TRUE)
-df_master <- mutate(df_master, Year2=as.character(df_master$Year))
-glimpse(df_master)
+#df_master <- mutate(df_master, Year2=as.character(df_master$Year))
+#glimpse(df_master)
+
 
 
 df_Germany <- filter(df_clean, Country=="Germany")
@@ -46,7 +47,7 @@ shinyServer(function(input, output) {
     output$numbPlot <- renderPlotly({
         PollutionVsTraffic <- filter(df_master, Year==input$YearBub)
         ggplot(PollutionVsTraffic) +
-            geom_point(mapping = aes(x=Traffic.Index, y=Pollution.Index, size= Crime.Index, color=Continent, s=Country))
+            geom_point(mapping = aes(x=PLI, y=CRI, size= HCI, color=Continent, s=Country))
 
 
     })

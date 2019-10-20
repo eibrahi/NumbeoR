@@ -29,7 +29,7 @@ df_Germany <- filter(df_clean, Country=="Germany")
 tsibble_Germany <- as_tsibble(df_Germany, index=Year)
 
 fit_ets <- tsibble_Germany %>%
-    model(ETS(Crime.Index ~ error("A") + trend("N") + season("N"), opt_crit = "mse"))
+    model(ETS(Crime ~ error("A") + trend("N") + season("N"), opt_crit = "mse"))
 fc_ets <- fit_ets %>%
     forecast(h = 3)
 
@@ -47,24 +47,24 @@ shinyServer(function(input, output) {
     output$numbPlot <- renderPlotly({
         df_master <- filter(df_master, Year==input$YearBub)
         
-        datax <- switch(input$var, 
-                       "PLI" = df_master$,
-                       "CRI" = df_master$`Crime Index`,
-                       "HCI" = df_master$`Health Care Index`,
-                       "CLI" = df_master$`Cost of Living Index`,
-                       "RTI" = df_master$`Rent Index`)
-        datay <- switch(input$var, 
-                        "PLI" = df_master$`Pollution Index`,
-                        "CRI" = df_master$`Crime Index`,
-                        "HCI" = df_master$`Health Care Index`,
-                        "CLI" = df_master$`Cost of Living Index`,
-                        "RTI" = df_master$`Rent Index`)
-        datab <- switch(input$var, 
-                        "PLI" = df_master$`Pollution Index`,
-                        "CRI" = df_master$`Crime Index`,
-                        "HCI" = df_master$`Health Care Index`,
-                        "CLI" = df_master$`Cost of Living Index`,
-                        "RTI" = df_master$`Rent Index`)
+        datax <- switch(input$xVar, 
+                       "PLI" = df_master$Pollution,
+                       "CRI" = df_master$Crime,
+                       "HCI" = df_master$HealthCare,
+                       "CLI" = df_master$CostOfLiving,
+                       "RTI" = df_master$Rent)
+        datay <- switch(input$yVar, 
+                        "PLI" = df_master$Pollution,
+                        "CRI" = df_master$Crime,
+                        "HCI" = df_master$HealthCare,
+                        "CLI" = df_master$CostOfLiving,
+                        "RTI" = df_master$Rent)
+        datab <- switch(input$bubble, 
+                        "PLI" = df_master$Pollution,
+                        "CRI" = df_master$Crime,
+                        "HCI" = df_master$HealthCare,
+                        "CLI" = df_master$CostOfLiving,
+                        "RTI" = df_master$Rent)
         
         ggplot(df_master) +
             geom_point(mapping = aes(x=datax, y=datay, size=datab, color=Continent, s=Country))

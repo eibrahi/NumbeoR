@@ -1109,3 +1109,51 @@ The application of pure data-driven models based on historical data is not appro
 Furthermore domain knowledge is required to come to conclusions about the reasons for the past increase and how to improve the situation.  
 
 
+
+---
+Correlation Anzahl Flüchtlinge
+
+```{r}
+asylumSeekerGer <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/asylum_seeker_Germany.csv",header=TRUE, sep=";")
+colnames(asylumSeekerGer) <- c("Year", "AsylumSeekerGermany", "AsylumSeekerGermanyCum")
+```
+see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
+--- 
+
+```{r}
+df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
+```
+
+```{r}
+glimpse(df_corCrimeAsylumGer)
+```
+
+
+```{r}
+corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, `Crime Index`, `AsylumSeekerGermanyCum`)))
+corN
+```
+
+---
+Correlation tatsächliche Krim
+
+```{r}
+numberCrimesGer <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crimeStatisticsGermany.csv",header=TRUE, sep=";")
+colnames(numberCrimesGer) <- c("Year", "number_crimes")
+```
+see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
+--- 
+
+```{r}
+df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
+```
+
+```{r}
+glimpse(df_corCrimePerRealGer)
+```
+
+
+```{r}
+corN <- rcorr(as.matrix(select(df_corCrimePerRealGer, `Crime Index`, `number_crimes`)))
+corN
+```

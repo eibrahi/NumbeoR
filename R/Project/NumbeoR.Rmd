@@ -733,8 +733,10 @@ corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, Crime, AsylumSeekerGermanyC
 corN
 ```
 
+.footnote[
 The historical number of asylum seekers are from: [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
-  
+]
+
 ---
 ### Crime Index vs. Real Crime Rates
 
@@ -756,7 +758,9 @@ corN
 
 **Result**: The real crime rates seem not to influence how secure people think they are. 
 
+.footnote[
 The historical number of registered crimes are from: [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
+]
 
 ---
 ### Conclusion Hypothesis Testing
@@ -976,7 +980,7 @@ plot(pollutionGermanyTS, col="purple", main="Pollution Index Germany")
 
 ```
 
-----
+---
 
 #### Correlations
 

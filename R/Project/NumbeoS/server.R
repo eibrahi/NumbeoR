@@ -20,7 +20,7 @@ packageVersion('plotly')
 
 df_master <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/MasterDF.csv", header=TRUE)
 df_clean <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/CleanDF.csv", header=TRUE)
-#df_master <- mutate(df_master, Year2=as.character(df_master$Year))
+df_master <- mutate(df_master, Year2=as.character(df_master$Year))
 #glimpse(df_master)
 
 
@@ -45,9 +45,29 @@ shinyServer(function(input, output) {
      })
 
     output$numbPlot <- renderPlotly({
-        PollutionVsTraffic <- filter(df_master, Year==input$YearBub)
-        ggplot(PollutionVsTraffic) +
-            geom_point(mapping = aes(x=PLI, y=CRI, size= HCI, color=Continent, s=Country))
+        df_master <- filter(df_master, Year==input$YearBub)
+        
+        datax <- switch(input$var, 
+                       "PLI" = df_master$,
+                       "CRI" = df_master$`Crime Index`,
+                       "HCI" = df_master$`Health Care Index`,
+                       "CLI" = df_master$`Cost of Living Index`,
+                       "RTI" = df_master$`Rent Index`)
+        datay <- switch(input$var, 
+                        "PLI" = df_master$`Pollution Index`,
+                        "CRI" = df_master$`Crime Index`,
+                        "HCI" = df_master$`Health Care Index`,
+                        "CLI" = df_master$`Cost of Living Index`,
+                        "RTI" = df_master$`Rent Index`)
+        datab <- switch(input$var, 
+                        "PLI" = df_master$`Pollution Index`,
+                        "CRI" = df_master$`Crime Index`,
+                        "HCI" = df_master$`Health Care Index`,
+                        "CLI" = df_master$`Cost of Living Index`,
+                        "RTI" = df_master$`Rent Index`)
+        
+        ggplot(df_master) +
+            geom_point(mapping = aes(x=datax, y=datay, size=datab, color=Continent, s=Country))
 
 
     })

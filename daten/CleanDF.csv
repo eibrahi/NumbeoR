@@ -1,4 +1,4 @@
-"Year","Country","Cost of Living Index","Rent Index","Local Purchasing Power Index","Gross Rental Yield City Centre","Gross Rental Yield Outside of Centre","Mortgage As A Percentage Of Income","Crime Index","Health Care Index","Pollution Index","Traffic Index","Time Index(in minutes)","CO2 Emission Index","Continent"
+"Year","Country","CostOfLiving","Rent","LocalPurchasingPower","GrossRentalYieldCityCentre","GrossRentalYieldOutsideOfCentre","MortgageAsAPercentageOfIncome","Crime","HealthCare","Pollution","Traffic","Time","CO2Emission","Continent"
 2012,"Norway",151.34,55.5,92.62,4.18,4.35,55.86,19.07,79.04,19.22,43.38,18.5,1291.33,"Europe"
 2012,"Switzerland",141.31,58.51,127.45,3.55,4,43.73,25.78,79.51,35.49,68.55,30.88,1577.5,"Europe"
 2012,"Japan",134.23,54.22,79.94,2.11,2.15,111.14,5.75,96.11,52.5,133.75,46.5,640,"Asia"

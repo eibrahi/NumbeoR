@@ -307,33 +307,13 @@ df_master
 
 class: center, middle
 
-# Data Understanding and Preparation
-
----
-## General Approach
-
-* Detailed inspection of data and data structure
-* Selection of content to be used afterwards
-* Data cleansing (e.g. outlier, NAs, NaNs)
-* Final validation and verification of data set
-
----
-class: center, middle
-
-## Data Inspection
-
----
-
-A summary of dataframe structure and data types can be illustrated with the glimpse function:
-```{r}
-glimpse(df_master)
-```
+## Extend Master Dataframe with Continent 
 
 ---
 
 Furthermore we would like to add the information in which continent the country is.
 
-Therefore we import a table which includes a country continent mapping
+Therefore we import a table which includes a country continent mapping.
 
 ```{r}
 countryContinent <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/CountryContinent.csv",header=TRUE, sep=";")
@@ -384,6 +364,74 @@ glimpse(df_master_continent)
 ---
 class: center, middle
 
+## Change the Column Names
+
+---
+
+We will change the column names so that there are no *blanks* anymore.
+
+```{r}
+colnames(df_master_continent)[which(names(df_master_continent) == "Cost of Living Index")] <- "CostOfLiving"
+colnames(df_master_continent)[which(names(df_master_continent) == "Rent Index")] <- "Rent"
+colnames(df_master_continent)[which(names(df_master_continent) == "Cost of Living Plus Rent Index")] <- "CostOfLivingPlusRent"
+colnames(df_master_continent)[which(names(df_master_continent) == "Groceries Index")] <- "Groceries"
+colnames(df_master_continent)[which(names(df_master_continent) == "Restaurant Price Index")] <- "RestaurantPrice"
+colnames(df_master_continent)[which(names(df_master_continent) == "Local Purchasing Power Index")] <- "LocalPurchasingPower"
+colnames(df_master_continent)[which(names(df_master_continent) == "Crime Index")] <- "Crime"
+colnames(df_master_continent)[which(names(df_master_continent) == "Safety Index")] <- "Safety"
+colnames(df_master_continent)[which(names(df_master_continent) == "Health Care Index")] <- "HealthCare"
+colnames(df_master_continent)[which(names(df_master_continent) == "Health CareExp. Index")] <- "HealthCareExp"
+colnames(df_master_continent)[which(names(df_master_continent) == "Pollution Index")] <- "Pollution"
+colnames(df_master_continent)[which(names(df_master_continent) == "Exp Pollution Index")] <- "ExpPollution"
+colnames(df_master_continent)[which(names(df_master_continent) == "Health Care Index")] <- "HealthCare"
+colnames(df_master_continent)[which(names(df_master_continent) == "Price To Income Ratio")] <- "PriceToIncome"
+colnames(df_master_continent)[which(names(df_master_continent) == "Gross Rental Yield City Centre")] <- "GrossRentalYieldCityCentre"
+colnames(df_master_continent)[which(names(df_master_continent) == "Gross Rental Yield Outside of Centre")] <- "GrossRentalYieldOutsideOfCentre"
+colnames(df_master_continent)[which(names(df_master_continent) == "Price To Rent Ratio City Centre")] <- "PriceToRentRatioCityCentre"
+colnames(df_master_continent)[which(names(df_master_continent) == "Price To Rent Ratio Outside Of City Centre")] <- "PriceToRentRatioOutsideOfCityCentre"
+colnames(df_master_continent)[which(names(df_master_continent) == "Mortgage As A Percentage Of Income")] <- "MortgageAsAPercentageOfIncome"
+colnames(df_master_continent)[which(names(df_master_continent) == "Affordability Index")] <- "Affordability"
+colnames(df_master_continent)[which(names(df_master_continent) == "Traffic Index")] <- "Traffic"
+colnames(df_master_continent)[which(names(df_master_continent) == "Time Index(in minutes)")] <- "Time"
+colnames(df_master_continent)[which(names(df_master_continent) == "Time Exp. Index")] <- "TimeExp"
+colnames(df_master_continent)[which(names(df_master_continent) == "Inefficiency Index")] <- "Inefficiency"
+colnames(df_master_continent)[which(names(df_master_continent) == "CO2 Emission Index")] <- "CO2Emission"
+glimpse(df_master_continent)
+```
+
+
+---
+
+class: center, middle
+
+# Data Understanding and Preparation
+
+---
+## General Approach
+
+* Detailed inspection of data and data structure
+* Selection of content to be used afterwards
+* Data cleansing (e.g. outlier, NAs, NaNs)
+* Final validation and verification of data set
+
+---
+class: center, middle
+
+## Data Inspection
+
+---
+
+A summary of dataframe structure and data types can be illustrated with the glimpse function:
+```{r}
+glimpse(df_master_continent)
+```
+
+
+
+---
+
+class: center, middle
+
 ## Data Selection
 
 ---
@@ -391,24 +439,19 @@ class: center, middle
 Selection of variables which are to be used in later analyses
 
 ```{r}
-df_analysis <- select(df_master_continent, Year, Country, 'Cost of Living Index', 'Rent Index',
-    'Local Purchasing Power Index', 'Gross Rental Yield City Centre',
-    'Gross Rental Yield Outside of Centre',
-    'Mortgage As A Percentage Of Income', 'Crime Index', 'Health Care Index',
-    'Pollution Index', 'Traffic Index', 'Time Index(in minutes)',
-    'CO2 Emission Index', Continent)
-
-
-```
-
-
-
-```{r}
-df_analysis
+df_analysis <- select(df_master_continent, Year, Country, CostOfLiving, Rent,
+    LocalPurchasingPower, GrossRentalYieldCityCentre,
+    GrossRentalYieldOutsideOfCentre,
+    MortgageAsAPercentageOfIncome, Crime, HealthCare,
+    Pollution, Traffic, Time,
+    CO2Emission, Continent)
 
 ```
 
-```{r}
+---
+
+The data structure is:
+```{r echo=FALSE}
 glimpse(df_analysis)
 ```
 
@@ -449,52 +492,90 @@ Checking on how many NA values are in the new clean dataframe shows that there a
 sum(is.na(df_analysis_clean))
 ```
 
+---
+
 The new structure of the dataframe is
-```{r}
+```{r echo=FALSE}
 glimpse(df_analysis_clean)
 ```
 
 
+
+
 ---
+class: center, middle
+
+# Exploratory Data Analysis (EDA)
+
+---
+## Approach and Goal
+
+In this chapter we would like to examine the data especially with respect to the Crime Index.  
+
+Here we would like to see if we can discover correlations between the Crime Index and other variables from Numbeo.  
+Furthermore we would like to see verify the hypothesis from the beginning:
+
+"The perceived crime of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx."
+
+---
+class: center, middle
+
+## Data Preparation for EDA
+
+---
+### Dataframe for 2019
 
 ```{r}
 df_analysis_clean_2019 <- filter(df_analysis_clean, Year == 2019)
 ```
 
 ---
+### Numeric Dataframe
+
+```{r}
+# drops <- c("Year","Country", "Continent")
+# df_master_numeric <- df_master_continent[ , !(names(df_master_continent) %in% drops)]
+# df_master_numeric <- na.omit(df_master_numeric)
+```
+
+
+```{r}
+# df_analysis_numeric <- select(df_master_numeric, 'Cost of Living Index', 'Rent Index',
+#     'Local Purchasing Power Index', 'Gross Rental Yield City Centre',
+#     'Gross Rental Yield Outside of Centre',
+#     'Mortgage As A Percentage Of Income', 'Crime Index', 'Health Care Index',
+#     'Pollution Index', 'Traffic Index', 'Time Index(in minutes)',
+#     'CO2 Emission Index')
+
+```
 
 ```{r}
 drops <- c("Year","Country", "Continent")
-df_master_numeric <- df_master_continent[ , !(names(df_master_continent) %in% drops)]
-df_master_numeric <- na.omit(df_master_numeric)
+df_master_numeric <- df_analysis_clean[ , !(names( df_analysis_clean) %in% drops)]
+#df_master_numeric <- na.omit(df_master_numeric)
 ```
 
-
-```{r}
-df_analysis_numeric <- select(df_master_numeric, 'Cost of Living Index', 'Rent Index',
-    'Local Purchasing Power Index', 'Gross Rental Yield City Centre',
-    'Gross Rental Yield Outside of Centre',
-    'Mortgage As A Percentage Of Income', 'Crime Index', 'Health Care Index',
-    'Pollution Index', 'Traffic Index', 'Time Index(in minutes)',
-    'CO2 Emission Index')
-
-```
 
 ```{r}
 sum(is.na(df_analysis_numeric))
 
 ```
 
+---
+### Dataframe for Germany
+
+For some analysis we will focus only on German data
+Filter dataframe only for Germany
+
+```{r}
+df_Germany <- filter(df_analysis_clean, Country=="Germany")
+```
 
 ---
+
 class: center, middle
 
-# Exploratory Data Analysis
-
----
-class: center, middle
-
-## Correlations
+## Correlations Numbeo Variables
 
 ---
 ### Correlation Matrix
@@ -508,83 +589,64 @@ corrplot(cor(df_analysis_numeric), method = "circle")
 
 ---
 
+For the *Crime Index* we assume a correlation especially with the  
+* *Cost of Living Index*, 
+* *Local Purchasing Power Index* and 
+* *CO2 Emission Index*.  
 
-The *Cost of Living* Index is a dependent variable of the *Rent Index* and the *Local Purchasing Power Index*. So further correlation analyses are not reasonable. 
-
-But we see that the *Pollution Index* could be negatively correlated with the *Local Purchasing Power Index* and with the *Cost of Living Index*. 
-
-The *CO2 Emission Index* could be positively correlated with *Gross Rerntal Yields* and *Crime Index*.  
-
-Furthermore, the *Health Care Index* seems to be positively correlated with the *Local Purchasing Power Index*. 
-
-This will be examined in the following
+This will be examined in the folling.
 
 --- 
 
-### Pollution vs. Local Purchasing Power
+### Pollution vs. Cost of Living
 
 The function rcorr() [in Hmisc package] can be used to compute the significance levels (p-value) for pearson or spearman correlations. It returns both the correlation coefficients and the p-value of the correlation for all possible pairs of columns in the data table.
 
-Here, we show the (negative) correlation of two variables Polltion Index and Local Purchasing Power Index:
+Here, we show the (negative) correlation of two variables *Crime Index* and *Cost of Living Index*:
 ```{r}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Local Purchasing Power Index`)))
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Crime Index`,`Cost of Living Index`)))
 corN
 ```
 
+**Result**: No significant correlation is existing. 
 
 see also [sthda](http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software)
 
 ---
 
-### Pollution vs. Cost of Living
+### Crime vs. Local Purchasing Power
 
-Here, we show the (negative) correlation of two variables Polltion Index and Cost of Living Index:
+Here, we show the (negative) correlation of two variables *Crime Index* and *Local Purchasing Power Index*:
 ```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`Pollution Index`,`Cost of Living Index`)))
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Crime Index`,`Local Purchasing Power Index`)))
 corN
 ```
+
+**Result**: No significant correlation is existing. 
 
 ---
 
-### CO2 Emission  vs. Crime
+### Crime  vs. CO2 Emission
 
-Here, we show the (positive) correlation of variable CO2 Emission Index and the two indexes for Gross Rental Yields:
+Here, we show the (positive) correlation of the tow variables *Crime Index* and *CO2 Emission Index*:
 ```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Crime Index`)))
+corN <- rcorr(as.matrix(select(df_analysis_numeric,`Crime Index`, `CO2 Emission Index`)))
 corN
 ```
 
-```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`CO2 Emission Index`,`Gross Rental Yield Outside of Centre`)))
-corN
-```
 
 ---
 
-### CO2 Emission  vs. Local Purchasing Power
+class: center, middle
 
-The correlation of the two variables Health Care Index and the Local Purchasing Power:
-```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`Health Care Index`,`Local Purchasing Power Index`)))
-corN
-```
+## Correlations for Hypothesis Testing
 
----
-
-### Health Care  vs. Local Purchasing Power
-
-The correlation of the two variables Health Care Index and the Local Purchasing Power:
-```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,`Health Care Index`,`Local Purchasing Power Index`)))
-corN
-```
-  
 ---
 
 ### Crime Index vs. Number of Refugees
 
 Correlation of perceived crimes and the estimated number refugees in Germany
-(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
+(number of refugeesis an estimation and is derived from accumulation of number of asylum seekers from 2012 till 2019)
 
 ```{r}
 # Importing data for number of asylum seekers per year from CSV file (data comes from statista)
@@ -598,7 +660,8 @@ df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
 corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, `Crime Index`, `AsylumSeekerGermanyCum`)))
 corN
 ```
-see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
+
+The historical number of asylum seekers are from: [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
   
 ---
 ### Crime Index vs. Real Crime Rates
@@ -618,7 +681,19 @@ df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
 corN <- rcorr(as.matrix(select(df_corCrimePerRealGer, `Crime Index`, `number_crimes`)))
 corN
 ```
-see [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
+
+**Result**: The real crime rates seem not to influence how secure people think they are. 
+
+The historical number of registered crimes are from: [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
+
+---
+### Conclusion Hypothesis Testing
+
+The hypothesis can be confirmed.  
+The real crime rates do not have impact on how secure people feel.  
+However, the number of refugees correlates with the how people perceive the crime rate.  
+The reasons behind that should be analyzed in more depth. 
+We think that the negative reportings in the media and politics lead to this results.
 
 ---
 
@@ -681,11 +756,6 @@ class: center, middle
 ---
 ### Preparation Dataframe
 
-Filter dataframe only for Germany
-
-```{r}
-df_Germany <- filter(df_master, Country=="Germany")
-```
 
 There are diffrent objects that can be used lateron:
 * tsibbles
@@ -794,7 +864,7 @@ autoplot(tsibble_Germany,`Crime Index`, col="black") +
 ---
 
 #### Cost of Living Index Germany
-```{r echo=FALSE}
+```{r include=FALSE}
 autoplot(tsibble_Germany,`Cost of Living Index`, col="red") +
     labs(title = "Cost of Living Index Germany", subtitle = "Years 2012-2019") +
     xlab("Year")
@@ -805,7 +875,7 @@ autoplot(tsibble_Germany,`Cost of Living Index`, col="red") +
 ---
 
 #### Health Care Index Germany
-```{r echo=FALSE}
+```{r include=FALSE}
 autoplot(tsibble_Germany,`Health Care Index`, col="orange") +
     labs(title = "Health Care Index Germany", subtitle = "Years 2012-2019") +
     xlab("Year")
@@ -816,7 +886,7 @@ autoplot(tsibble_Germany,`Health Care Index`, col="orange") +
 
 
 #### Pollution Index Germany
-```{r echo=FALSE}
+```{r include=FALSE}
 autoplot(tsibble_Germany,`Pollution Index`, col="purple") +
     labs(title = "Pollution Index Germany", subtitle = "Years 2012-2019") +
     xlab("Year")

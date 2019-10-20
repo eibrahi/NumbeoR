@@ -17,9 +17,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ---
-
 # Project Description
 
+---
+## Project Goals
+
+* Analysis of perceived crime
+    * global analysis of Numbeo data
+    * hypothesis analysis with focus of Germany
+* Time Series Analysis and forecasting of crime in Germany
+* Dashboarding of Numbeo data
+
+---
+## Hypothesis
+
+The perceived crime of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx.
+
+--- 
+## Data Sources
+Numbeo
+Statista
+
+
+---
+## Architecture
 ![](pics/Swimlane.PNG)
 
 ---
@@ -52,11 +73,14 @@ library(tsibble)                       # tsibble object used for forecasting
 ---
 class: center, middle
 
-# Setup of the PostgreSQL Database
+# Setup of PostgreSQL database
+
+---
+## Technical setup of PostgreSQL
 
 ---
 
-## Establishing Connection to PostgreSQL
+### Establishing Connection to PostgreSQL
 
 ---
 ```{r echo=TRUE}
@@ -86,12 +110,12 @@ rm(pw)
 
 ---
 
-## Creation of Database
+### Creation of Database
 A database with the name "NumbeoR" in PostgreSQL has to be created manually. 
 
 ---
 
-## Creation of Tables
+### Creation of Tables
 
 ```{sql connection=con}
 DROP Table cost_of_living, crime, health_care, pollution, property_investment, traffic
@@ -161,7 +185,7 @@ CREATE TABLE traffic (
 ---
 class: center, middle
 
-# Data import
+## Data Import to PostgreSQL
 
 ---
 The basic activity in the beginning of the project is to read in the JSON files containing scraped data from NumbeoR, to create dataframe and finally memorizing the data into PostgreSQL.
@@ -198,7 +222,7 @@ for (i in 1 : length(my_files)) {
 
 ---
 class: center, middle
-# Export Data From PostgreSQL
+## Data Export from PostgreSQL
 
 ---
 
@@ -207,11 +231,9 @@ One could export with sQL codes.
 We use R codes instead.
 
 ---
-## SQL Enviroment
-
----
 ### SQL Queries
 
+---
 #### Cost of Living in Germany
 
 ```{sql connection=con}
@@ -232,7 +254,7 @@ SELECT "Country", "CO2 Emission Index"
 
 ---
 
-#### Averge Crime Index from 2012 - 2019
+#### Average Crime Index from 2012 - 2019
 
 ```{sql connection=con}
 SELECT "Year", AVG("Crime Index")
@@ -246,10 +268,10 @@ SELECT "Year", AVG("Crime Index")
 ---
 class: center, middle
 
-## R Enviroment
+### Creating Master Dataframe
 
 ---
-### Data Import from PostgreSQL
+#### Data Import from PostgreSQL
 
 Import of the different tables with the help of *dbGetQuery* function
 
@@ -263,7 +285,7 @@ df_traffic_postgres <- dbGetQuery(con, "SELECT * from traffic")
 ```
 
 ---
-### Joining Dataframes (Tables)
+#### Joining Dataframes (Tables)
 
 Joining the data to one master dataframe with a *nested full_join* function
 
@@ -292,8 +314,7 @@ class: center, middle
 
 * Detailed inspection of data and data structure
 * Selection of content to be used afterwards
-* Outlier detection with the help of descriptive statistics
-* Data cleansing (e.g. outlier, NaNs)
+* Data cleansing (e.g. outlier, NAs, NaNs)
 * Final validation and verification of data set
 
 ---
@@ -397,6 +418,9 @@ class: center, middle
 ## Data Cleansing
 
 ---
+### Deletion of Outliers
+
+---
 ### Deletion of NA Values
 
 Sum of NA values can be ascertained as following:
@@ -461,13 +485,6 @@ sum(is.na(df_analysis_numeric))
 
 ```
 
----
-## Data Export for Shiny
-
-```{r}
-write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
-write.csv(df_analysis_clean,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/CleanDF.csv", row.names = FALSE)
-```
 
 ---
 class: center, middle
@@ -583,12 +600,12 @@ ggplotly(crime_plot_2019)
 ### Scatter Plot
 
 ```{r echo=FALSE, warning=FALSE}
-crime_health_plot_2019 <- ggplot(df_analysis_clean_2019) +
+crimeTrafficPollution_plot_2019 <- ggplot(df_analysis_clean_2019) +
     geom_point(
-        mapping = aes(x = `Pollution Index`, y = `Cost of Living Index`,color= Continent, points=Country)
+        mapping = aes(x = `Traffic Index`, y = `Pollution Index`, size=`Crime Index`,color= Continent, points=Country)
         )
 
-ggplotly(crime_health_plot_2019)
+ggplotly(crimeTrafficPollution_plot_2019)
 ```
 
 
@@ -1071,11 +1088,22 @@ fit_tslm %>% forecast(h = "3 years") %>%
 ```
 
 
+---
+# Dashboarding in Shiny
+
+---
+## Data Export 
+The complete master dataframe and clean dataframe is export for further usage in Shiny dashboarding.
+```{r}
+write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
+write.csv(df_analysis_clean,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/CleanDF.csv", row.names = FALSE)
+```
+
 
 
 ---
 class: center, middle
-## Overall conclusion
+# Overall conclusion
 
 The application of pure data-driven models based on historical data is not appropriate to come to conclusions how the crime index will develop in future.  
 Furthermore domain knowledge is required to come to conclusions about the reasons for the past increase and how to improve the situation.  

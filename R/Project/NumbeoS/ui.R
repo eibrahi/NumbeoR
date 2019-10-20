@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(plotly)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(navlistPanel("NumbeoR",
@@ -27,6 +28,7 @@ shinyUI(fluidPage(navlistPanel("NumbeoR",
                                         ),
                     
                                         # Show a plot of the generated distribution
+                                        #mainPanel(plotlyOutput("Forecast")
                                         mainPanel(plotOutput("Forecast")
                                         )
                                     )
@@ -45,12 +47,21 @@ shinyUI(fluidPage(navlistPanel("NumbeoR",
                                     sidebarLayout(
                                         sidebarPanel(
                                             sliderInput("YearBub","Chose the year:",min=2012, max=2019, value = 2012, step = 1, 
-                                                             animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL)
-                                            )    
+                                                             animate=animationOptions(750, loop=FALSE, playButton = NULL, pauseButton = NULL),
+                          
+                                            
+                                            selectInput(xVar, "Chose the x Variable", ) 
+                                        )
+                                            
+                                            
                                         ),
+                                        
+                                        
+                                        
                                          
                                         # Show a plot of the generated distribution
-                                        mainPanel(plotOutput("numbPlot")
+                                        #mainPanel(plotOutput("numbPlot")
+                                        mainPanel(plotlyOutput("numbPlot")
                                         )
                                     )
                                 ),

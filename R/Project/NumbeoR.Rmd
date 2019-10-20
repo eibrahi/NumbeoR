@@ -1,8 +1,9 @@
 ---
 title: "Project assignment NumbeoR"
+subtitle: "Programming Languages for Data Science"
 author: "Elvir Ibrahimovic & Svetislav Bratic"
 date: "23 10 2019"
-output: 
+output:
   xaringan::moon_reader:
     lib_dir: libs
     nature:
@@ -133,7 +134,6 @@ library(GGally)                        # visualizations of correlations
 
 library(Hmisc)                         # calculation of correlations
 
-#library(fpp)                           # forecasting/times series
 library(fpp2)                          # forecasting/times series
 library(fpp3)                          # forecasting/times series
 library(tsibble)                       # tsibble object used for forecasting
@@ -566,7 +566,7 @@ sum(is.na(df_analysis_clean))
 
 ---
 
-The new structure of the dataframe is
+The new structure of the dataframe is:
 ```{r echo=FALSE}
 glimpse(df_analysis_clean)
 ```
@@ -652,12 +652,13 @@ class: center, middle
 ---
 ### Correlation Matrix
 
-First, a correlation matix will be generated with the help of the corrplot package
+First, a correlation matrix will be generated with the help of the corrplot package:  
 
 ```{r echo=FALSE}
 
 corrplot(cor(df_analysis_numeric), method = "circle")
 ```
+
 
 ---
 
@@ -666,17 +667,17 @@ For the *Crime Index* we assume a correlation especially with the
 * *Local Purchasing Power Index* and 
 * *CO2 Emission Index*.  
 
-This will be examined in the folling.
+This will be examined in the following.
 
 --- 
 
-### Pollution vs. Cost of Living
+### Crimes vs. Cost of Living
 
 The function rcorr() [in Hmisc package] can be used to compute the significance levels (p-value) for pearson or spearman correlations. It returns both the correlation coefficients and the p-value of the correlation for all possible pairs of columns in the data table.
 
 Here, we show the (negative) correlation of two variables *Crime Index* and *Cost of Living Index*:
 ```{r}
-corN <- rcorr(as.matrix(select(df_analysis_numeric, Crime,CostOfLiving)))
+corN <- rcorr(as.matrix(select(df_analysis_numeric, Crime, CostOfLiving)))
 corN
 ```
 
@@ -686,11 +687,11 @@ see also [sthda](http://www.sthda.com/english/wiki/correlation-matrix-a-quick-st
 
 ---
 
-### Crime vs. Local Purchasing Power
+### Crimes vs. Local Purchasing Power
 
 Here, we show the (negative) correlation of two variables *Crime Index* and *Local Purchasing Power Index*:
 ```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric,Crime, LocalPurchasingPower)))
+corN <- rcorr(as.matrix(select(df_analysis_numeric, Crime, LocalPurchasingPower)))
 corN
 ```
 
@@ -698,7 +699,7 @@ corN
 
 ---
 
-### Crime  vs. CO2 Emission
+### Crimes  vs. CO2 Emission
 
 Here, we show the (positive) correlation of the tow variables *Crime Index* and *CO2 Emission Index*:
 ```{r echo=FALSE}
@@ -1181,15 +1182,6 @@ fc_ets2 %>%
   geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets2)) +
   ylab("Crime Index") + xlab("Year")
 ```
-
----
-class: center, middle
-### Simple moving average
-
----
-#### General
-
-The Moving average model creates predictions based on the average of a subset of past values. 
 
 ---
 

@@ -11,42 +11,113 @@ output:
       countIncrementalSlides: false
 ---
 
+
 ```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(include = FALSE)
 ```
 
 
+# Agenda
+
+--
+
+- Project Description
+
+--
+
+- Required Libraries
+
+--
+
+- PostgreSQL
+
+--
+
+- Data Wrangling and Preparation
+
+--
+
+- Exploratory Data Analysis incl. Hypothesis Testing
+
+--
+
+- Time Series Analysis and Forecasting
+
+--
+
+- Dashboarding in Shiny
+
+
+
 ---
+class: center, middle
 # Project Description
 
 ---
 ## Project Goals
 
-* Analysis of perceived crime
-    * global analysis of Numbeo data
-    * hypothesis analysis with focus of Germany
-* Time Series Analysis and forecasting of crime in Germany
-* Dashboarding of Numbeo data
+--
+
+- Analysis of perceived crime
+
+--
+
+ - Analysis of Numbeo data (globally)
+
+--
+
+ - Hypothesis testing (Germany)
+ 
+--
+
+- Time Series Analysis and Forecasting of crime in Germany
+
+--
+
+- Dashboarding of Numbeo data
 
 ---
 ## Hypothesis
 
-The perceived crime of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx.
+> The perceived crime of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx.
 
---- 
+---
 ## Data Sources
-Numbeo
-Statista for real crime rates and number of applications for asylum in Germany
+
+--
+
+**Numbeo** 
+
+--
+
+[Numbeo](www.numbeo.com) is the world’s largest database of user contributed data about cities and countries worldwide.  
+
+Numbeo provides information on world living conditions including *cost of living*, *housing indicators*, *health care*, *traffic*, *crime* and *pollution*.  
+
+--
+
+**Statista**   
+
+--
+
+[Statista](https://de.statista.com/) is a German online portal providing statistical data collected by market and opinion research institutes and data derived from the economic sector and official statistics.  
+
+We used it for statistical 'real' *crime rates* and number of *applications for asylum* in Germany.
 
 
 ---
 ## Architecture
-![](pics/Swimlane.PNG)
+
+.center[
+<img src="pics/Swimlane.PNG" width="900" height="450" />
+]
 
 ---
 # Loading of Required Libraries
 
-```{r, message=FALSE}
+---
+
+```{r echo=TRUE, message=FALSE}
 library(tidyverse)
 
 library(DBI)                           # for PostgreSQL
@@ -70,16 +141,18 @@ library(tsibble)                       # tsibble object used for forecasting
 
 ```
 
+
 ---
 class: center, middle
 
 # Setup of PostgreSQL database
 
 ---
+class: center, middle
 ## Technical setup of PostgreSQL
 
 ---
-
+class: center, middle
 ### Establishing Connection to PostgreSQL
 
 ---
@@ -110,8 +183,12 @@ rm(pw)
 
 ---
 
-### Creation of Database
-A database with the name "NumbeoR" in PostgreSQL has to be created manually. 
+### Creation of a Database
+A database with the name "NumbeoR" in PostgreSQL has to be created manually by the user. 
+
+.center[
+<img src="pics/databaseCreationPostgreSQL.PNG" width="800" height="300" />
+]
 
 ---
 
@@ -206,16 +283,16 @@ df_my_data <- list()
 
 for (i in 1 : length(my_files)) {
     # creating a list of JSON datafiles importing from Github
-    my_data[[i]] <- fromJSON(file = my_files[i])
+    my_data[[i]] <- fromJSON(file = my_files[i]) #<<
    
      # transform JSON files to dataframes, for each JSON file one dataframe
-    df_temp_my_data[[i]] <- do.call(rbind.data.frame, my_data[[i]])
+    df_temp_my_data[[i]] <- do.call(rbind.data.frame, my_data[[i]]) #<<
     
     # transpose dataframes to get the required structure
-    df_my_data[[i]] <- as.data.frame(t(df_temp_my_data[[i]]))  
+    df_my_data[[i]] <- as.data.frame(t(df_temp_my_data[[i]])) #<<
     
     # Writing data into PostgreSQL
-    dbWriteTable(con, my_tables[i], value = df_my_data[[i]], append = TRUE, row.names = FALSE)
+    dbWriteTable(con, my_tables[i], value = df_my_data[[i]], append = TRUE, row.names = FALSE) #<<
 }
 ```
 
@@ -225,18 +302,13 @@ class: center, middle
 ## Data Export from PostgreSQL
 
 ---
-
-There are different ways for exporting and further preparing data from PostgreSQL.  
-One could export with sQL codes.  
-We use R codes instead.
-
----
+class: center, middle
 ### SQL Queries
 
 ---
 #### Cost of Living in Germany
 
-```{sql connection=con}
+```{sql echo=TRUE, connection=con}
 SELECT * 
   FROM cost_of_living
   WHERE "Country" = 'Germany';
@@ -245,7 +317,7 @@ SELECT *
 ---
 #### Countries with very high CO2 pollutions in 2019
 
-```{sql connection=con}
+```{sql echo=TRUE, connection=con}
 SELECT "Country", "CO2 Emission Index"
   FROM traffic
   WHERE "Year"=2019 AND "CO2 Emission Index" > 6000
@@ -256,7 +328,7 @@ SELECT "Country", "CO2 Emission Index"
 
 #### Average Crime Index from 2012 - 2019
 
-```{sql connection=con}
+```{sql echo=TRUE, connection=con}
 SELECT "Year", AVG("Crime Index")
   FROM crime
   GROUP BY "Year"
@@ -275,7 +347,7 @@ class: center, middle
 
 Import of the different tables with the help of *dbGetQuery* function
 
-```{r}
+```{r echo=TRUE}
 df_cost_of_living_postgres <- dbGetQuery(con, "SELECT * from cost_of_living")
 df_crime_postgres <- dbGetQuery(con, "SELECT * from crime")
 df_health_care_postgres <- dbGetQuery(con, "SELECT * from health_care")

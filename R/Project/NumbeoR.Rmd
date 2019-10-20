@@ -1095,8 +1095,10 @@ fit_tslm %>% forecast(h = "3 years") %>%
 ## Data Export 
 The complete master dataframe and clean dataframe is export for further usage in Shiny dashboarding.
 ```{r}
-write.csv(df_master_continent,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/MasterDF.csv", row.names = FALSE)
-write.csv(df_analysis_clean,"C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/CleanDF.csv", row.names = FALSE)
+pathForShiny1 <- paste0(path,"daten/MasterDF.csv")
+pathForShiny2 <- paste0(path,"daten/CleanDF.csv")
+write.csv(df_master_continent,pathForShiny1, row.names = FALSE)
+write.csv(df_analysis_clean,pathForShiny2, row.names = FALSE)
 ```
 
 
@@ -1111,34 +1113,34 @@ Furthermore domain knowledge is required to come to conclusions about the reason
 
 
 ---
-Correlation Anzahl Flüchtlinge
+#### Crime Index vs. Number of Refugees
+
+Correlation of perceived crimes and the estimated number refugees in Germany
+(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
 
 ```{r}
-asylumSeekerGer <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/asylum_seeker_Germany.csv",header=TRUE, sep=";")
+# Importing data for number of asylum seekers per year
+asylumSeekerGer <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/asylum_seeker_Germany.csv",header=TRUE, sep=";")
 colnames(asylumSeekerGer) <- c("Year", "AsylumSeekerGermany", "AsylumSeekerGermanyCum")
-```
-see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
---- 
 
-```{r}
+# Join with Dataframe for Germany
 df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
-```
 
-```{r}
-glimpse(df_corCrimeAsylumGer)
-```
-
-
-```{r}
+# Korrelation analysis
 corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, `Crime Index`, `AsylumSeekerGermanyCum`)))
 corN
 ```
+see [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
+
 
 ---
-Correlation tatsächliche Krim
+#### Crime Index vs. Real Crime Rates
+
+Correlation of perceived crimes and number of registered crime rates. 
+(number of refugees estimated derived from cumulation of number of asylum seekers from 2012 till 2019)
 
 ```{r}
-numberCrimesGer <- read.csv(file="C:/Users/sveti/Desktop/Diverses/GitProjects/NumbeoR/daten/crimeStatisticsGermany.csv",header=TRUE, sep=";")
+numberCrimesGer <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/crimeStatisticsGermany.csv",header=TRUE, sep=";")
 colnames(numberCrimesGer) <- c("Year", "number_crimes")
 ```
 see [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)

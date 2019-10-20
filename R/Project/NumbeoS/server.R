@@ -15,6 +15,7 @@ library(fpp3)                          # forecasting/times series
 library(tsibble)                       # tsibble object used for forecasting
 
 library(plotly)                        # visualizations
+packageVersion('plotly')
 
 
 df_master <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/MasterDF.csv", header=TRUE)
@@ -37,15 +38,15 @@ shinyServer(function(input, output) {
 
     output$Forecast <- renderPlot({
         fc_ets %>%
-             autoplot(tsibble_Germany) +
+            autoplot(tsibble_Germany) +
              geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets)) +
              ylab("Crime Index") + xlab("Year")
      })
 
-    output$numbPlot <- renderPlot({
-        crimeVsHealth <- filter(df_master, Year==input$YearBub)
-        ggplot(crimeVsHealth) +
-            geom_point(mapping = aes(x=Crime.Index, y=Health.Care.Index, color=Continent, s=Country))
+    output$numbPlot <- renderPlotly({
+        PollutionVsTraffic <- filter(df_master, Year==input$YearBub)
+        ggplot(PollutionVsTraffic) +
+            geom_point(mapping = aes(x=Traffic.Index, y=Pollution.Index, size= Crime.Index, color=Continent, s=Country))
 
 
     })

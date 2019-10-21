@@ -1,5 +1,5 @@
 ---
-title: "Project assignment NumbeoR"
+title: "Project Assignment NumbeoR"
 subtitle: "Programming Languages for Data Science"
 author: "Elvir Ibrahimovic & Svetislav Bratic"
 date: "23 10 2019"
@@ -91,7 +91,7 @@ class: center, middle
 
 --
 
-[Numbeo](www.numbeo.com) is the world’s largest database of user contributed data about cities and countries worldwide.  
+[Numbeo](https://www.numbeo.com) is the world’s largest database of user contributed data about cities and countries worldwide.  
 
 Numbeo provides information on world living conditions including *cost of living*, *housing indicators*, *health care*, *traffic*, *crime* and *pollution*.  
 
@@ -113,6 +113,13 @@ We used it for statistical 'real' *crime rates* and number of *applications for 
 <img src="pics/Swimlane.PNG" width="900" height="450" />
 ]
 
+---
+class: center, inverse
+background-image: url("pics/Github.PNG")
+ 
+## [GitHub Repository](https://github.com/eibrahi/NumbeoR)
+
+ 
 ---
 # Loading of Required Libraries
 
@@ -221,7 +228,7 @@ CREATE TABLE crime (
 ```
 
 ---
-class: center, middle
+class: middle
 ```{sql echo=TRUE, connection=con}
 CREATE TABLE health_care (
     "Year" integer,                                   -- Year
@@ -238,7 +245,7 @@ CREATE TABLE pollution (
 ```
 
 ---
-class: center, middle
+class: middle
 ```{sql echo=TRUE, connection=con}
 CREATE TABLE property_investment (
     "Year" integer,                                   -- Year
@@ -282,7 +289,7 @@ my_tables <- fromJSON(file= pathToTableJson)
 ```
 
 ---
-class: center, middle
+class: middle
 ```{r echo=TRUE}
 # creating lists
 my_data <- list()
@@ -448,9 +455,8 @@ df_master_continent[rowSums(is.na(df_master_continent["Continent"])) > 0,]
 ---
 
 For every country one contintent could be assigened.
-
-```{r}
-glimpse(df_master_continent[1:2,1:10])
+```{r echo=FALSE}
+glimpse(df_master_continent[1:2,])
 ```
 
 ---
@@ -496,7 +502,7 @@ colnames(df_master_continent)[which(names(df_master_continent) == "CO2 Emission 
 ```
 
 ```{r}
-glimpse(df_master_continent[1:3,])
+glimpse(df_master_continent[1:3,1:13])
 ```
 
 ---
@@ -506,24 +512,18 @@ class: center, middle
 ## Data Selection
 
 ---
-
-Selection of some variables which are to be used in some of the analyses (e.g correlation analysis), storage in a analysis dataframe.
+class: middle
+Selection of some variables which are to be used in some of the analyses (e.g correlation analysis), storage in an analysis dataframe.
 
 ```{r}
-df_analysis <- select(df_master_continent, Year, Country, CostOfLiving, Rent,
-    LocalPurchasingPower, GrossRentalYieldCityCentre,
+df_analysis <- select(df_master_continent, Year, Country, 
+    CostOfLiving, Rent, LocalPurchasingPower, 
+    GrossRentalYieldCityCentre,
     GrossRentalYieldOutsideOfCentre,
     MortgageAsAPercentageOfIncome, Crime, HealthCare,
     Pollution, Traffic, Time,
     CO2Emission, Continent)
 
-```
-
----
-
-The data structure of the analysis dataframe is:
-```{r echo=FALSE}
-glimpse(df_analysis[1:3,1:5])
 ```
 
 ---
@@ -538,10 +538,6 @@ class: center, middle
 --
 
 - Detailed inspection of data and data structure
-
---
-
-- Selection of content to be used afterwards
 
 --
 
@@ -560,7 +556,7 @@ class: center, middle
 
 A summary of dataframe structure and data types can be illustrated with the glimpse function:
 ```{r}
-glimpse(df_master_continent[1:3,1:5])
+glimpse(df_master_continent[1:3,1:15])
 ```
 
 ---
@@ -592,7 +588,7 @@ class: center, middle
 
 We see that the variable Mortgage As Percentage of Income has an outlier
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 histo <- ggplot(data = df_analysis) +
   geom_histogram(mapping = aes(MortgageAsAPercentageOfIncome),bins=30) +
   scale_x_log10() +
@@ -601,18 +597,23 @@ ggplotly(histo)
 ```
 
 ---
+Class: middle 
 Deletion of outliers:
 ```{r}
 df_analysis <- df_analysis %>% 
-  mutate(MortgageAsAPercentageOfIncome = ifelse(MortgageAsAPercentageOfIncome>2000, NA, MortgageAsAPercentageOfIncome))
+  mutate(MortgageAsAPercentageOfIncome = 
+           ifelse(MortgageAsAPercentageOfIncome>2000, 
+                  NA, MortgageAsAPercentageOfIncome))
 
 df_master_continent <- df_master_continent %>% 
-  mutate(MortgageAsAPercentageOfIncome = ifelse(MortgageAsAPercentageOfIncome>2000, NA, MortgageAsAPercentageOfIncome))
+  mutate(MortgageAsAPercentageOfIncome = 
+           ifelse(MortgageAsAPercentageOfIncome>2000, 
+                  NA, MortgageAsAPercentageOfIncome))
 ```
 
 ---
-
-```{r}
+class: center, middle
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 histo <- ggplot(data = df_analysis) +
   geom_histogram(mapping = aes(MortgageAsAPercentageOfIncome),bins=30) +
   scale_x_log10() +
@@ -635,7 +636,7 @@ df_analysis[rowSums(is.na(df_analysis)) > 0,][1:4,1:5]
 ```
 
 ---
-
+class: middle
 All rows containing NA values can be deleted with the na.omit function:
 
 ```{r}
@@ -650,16 +651,6 @@ sum(is.na(df_analysis_clean))
 ```
 
 ---
-
-The new structure of the clean dataframe is:
-```{r echo=FALSE}
-glimpse(df_analysis_clean[1:4,])
-```
-
-
-
-
----
 class: center, middle
 
 # Exploratory Data Analysis (EDA)
@@ -667,13 +658,13 @@ class: center, middle
 ---
 ## Approach and Goal
 
-In this chapter we would like to examine the data especially with respect to the Crime Index.  
+In this chapter we would like to examine the data especially with respect to the *Crime Index*.  
 
-Here we would like to see if we can discover correlations between the Crime Index and other variables from Numbeo.  
+Here we would like to see if we can discover *correlations* between the Crime Index and other variables from Numbeo.  
  
-Furthermore we would like to  verify the hypothesis from the beginning:
+Furthermore we would like to verify the *hypothesis* from the beginning:
 
-<"The perceived criminality of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx."
+>"The perceived criminality of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx."
 
 ---
 class: center, middle
@@ -682,24 +673,18 @@ class: center, middle
 
 ---
 ### Dataframe for 2019
-
+For later plottings we generate a separte dataframe with 2019 data.
 ```{r}
 df_analysis_clean_2019 <- filter(df_analysis_clean, Year == 2019)
 ```
 
 ---
 ### Numeric Dataframe
-
+For later correlations analysis we generate a separte dataframe with numeric variables.
 ```{r}
 drops <- c("Year","Country", "Continent")
 df_analysis_numeric <- df_analysis_clean[ , !(names( df_analysis_clean) %in% drops)]
 #df_master_numeric <- na.omit(df_master_numeric)
-```
-
-
-```{r}
-sum(is.na(df_analysis_numeric))
-
 ```
 
 ---
@@ -797,7 +782,7 @@ colnames(asylumSeekerGer) <- c("Year", "AsylumSeekerGermany", "AsylumSeekerGerma
 
 # Join with Dataframe for Germany
 df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
-df_corCrimeAsylumGer
+df_corCrimeAsylumGer[1:5,13:17]
 ```
 
 .footnote[
@@ -805,12 +790,15 @@ The historical number of asylum seekers are from: [statista](https://de.statista
 ]
 
 ---
-```{r echo=FALSE}
+class: middle
+
+```{r echo=TRUE}
 # Correlation analysis
 corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, Crime, AsylumSeekerGermanyCum)))
 corN
 ```
 
+**Result**: The number of refugees in Germany is correlated with the perceived crime index. 
 
 ---
 ### Crime Index vs. Real Crime Rates
@@ -825,7 +813,7 @@ colnames(numberCrimesGer) <- c("Year", "number_crimes")
 
 # Join with Dataframe for Germany
 df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
-df_corCrimePerRealGer
+df_corCrimePerRealGer[1:5,]
 ```
 
 .footnote[
@@ -833,8 +821,8 @@ The historical number of registered crimes are from: [statista](https://de.stati
 ]
 
 ---
-
-```{r echo=FALSE}
+class: middle
+```{r echo=TRUE}
 # Correlation analysis
 corN <- rcorr(as.matrix(select(df_corCrimePerRealGer, Crime, number_crimes)))
 corN
@@ -917,8 +905,10 @@ For which time horizon?
 We are analyizing the crime rate for Germany for the years **2012 until 2019**?
 
 
+.footnote[
 Note:
 This chapter is in general according to [Forecasting: Principles and Practice - February 2019](https://otexts.com/fpp3/) and [Forecasting: Principles and Practice - April 2018](https://otexts.com/fpp2/) by Rob J Hyndman and George Athanasopoulos 
+]
 
 ---
 class: center, middle
@@ -962,14 +952,10 @@ In order to be able to work with the partial data sets later, we split the respe
 
 ```{r}
 crimeGermanyVector <- df_Germany[,9]
-crimeGermanyVector
 costOfLivingVector <- df_Germany[,3]
-costOfLivingVector
 healthCareVector <- df_Germany[,11]
-healthCareVector 
 pollutionVector <- df_Germany[,13]
-pollutionVector
-
+crimeGermanyVector
 ```
 
 
@@ -1224,7 +1210,8 @@ fc_ets %>%
   geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets)) +
   ylab("Crime Index") + xlab("Year")
 ```
- In red the one-step-ahead fitted values plotted
+
+In red the one-step-ahead fitted values plotted
 
 ---
 Including an (additive) trend perspective will change the forecast.  
@@ -1274,6 +1261,8 @@ autoplot(ACF(tsibble_Germany, Crime)) # Variante 2
 
 ```
 
+---
+class: middle
 The dashed blue lines (±2/√T where T is the length of the time, in our case ±0,76) indicate whether the correlations are significantly different from zero.
 In our case no correlation is significant. 
 Time series that show no autocorrelation are called *white noise*. 
@@ -1288,10 +1277,8 @@ class: center, middle
 Could there exist a linearity?
 ```{r warning=FALSE, message=FALSE}
 tsibble_Germany %>% select(Crime) %>% 
-  ggplot(aes(x=Year, y=Crime)) +
-    ylab("Crime Index)") + xlab("Years") +
-    geom_point() +
-    geom_smooth(method="lm", se=FALSE)
+  ggplot(aes(x=Year, y=Crime)) + ylab("Crime Index)") + xlab("Years") +
+    geom_point() + geom_smooth(method="lm", se=FALSE)
 ```
 
 ---
@@ -1306,6 +1293,7 @@ Constraints for our use case:
 * In year 0 we certainly did not have a Crime Index of -4199
 * Furtermore, an improvement of the crime index is possible and probable over a long period leading to a non-linearity
 ---
+class: middle 
 Now we will create a linear forecast.
 
 First we train the model with TSLM() (time series linear model).
@@ -1326,14 +1314,20 @@ fit_tslm %>% forecast(h = "3 years") %>%
 ```
 
 ---
-class: center, middle
 # Overall conclusion
 
-The application of pure *data-driven models* based on historical data is not appropriate to come to conclusions how the crime index will develop in future.  
-Furthermore *domain knowledge* is required to come to conclusions about the reasons for the past increase and how to improve the situation.  
-For our topic of observation (crime index in Germany) it is **not an issue of refugees** because the the real crime rate did not worsen.  
-It is an issue on how this topic is handelded in the **media**.  
-And here the **politicians** and the **media** have room for improvement.
+**Results of the Hypothesis testing**
+
+* The perceived crime rate correlates positively with the number of refugees.  
+* This could lead to the conclusion that the refugees increase the real crime rate.   
+* For our topic of observation (crime index in Germany) it is *not an issue of refugees* because the the real crime rate did not worsen.    
+* We assume that the perception is caused by how this topic is handeled in the *media*.  
+* Our advice to the respective decision-makers is to further analyse this specific assumption. 
+
+**Results of the forecasting**  
+* The application of pure *data-driven models* based on historical data is not appropriate to come to conclusions how the crime index will develop in future.   
+* Furthermore *domain knowledge* is required to come to conclusions about the reasons for the past increase and how to improve the situation.  
+
 
 ---
 class: center, middle
@@ -1349,7 +1343,7 @@ write.csv(df_master_continent,pathForShiny1, row.names = FALSE)
 write.csv(df_analysis_clean,pathForShiny2, row.names = FALSE)
 ```
 
---- 
+---
 class: center, middle
 ## Shiny App
 Please open the [Shiny App](https://numbeo.shinyapps.io/NumbeoS/).

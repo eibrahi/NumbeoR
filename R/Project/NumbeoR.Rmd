@@ -14,7 +14,7 @@ output:
 
 
 ```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(include = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
@@ -59,7 +59,7 @@ class: center, middle
 
 --
 
-- Analysis of perceived crime
+- Analysis of perceived criminality 
 
 --
 
@@ -71,7 +71,7 @@ class: center, middle
  
 --
 
-- Time Series Analysis and Forecasting of crime in Germany
+- Time Series Analysis and Forecasting of criminality in Germany
 
 --
 
@@ -80,7 +80,7 @@ class: center, middle
 ---
 ## Hypothesis
 
-> The perceived crime of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx.
+> The perceived criminality of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx.
 
 ---
 ## Data Sources
@@ -116,8 +116,6 @@ We used it for statistical 'real' *crime rates* and number of *applications for 
 ---
 # Loading of Required Libraries
 
----
-
 ```{r echo=TRUE, message=FALSE}
 library(tidyverse)
 
@@ -152,10 +150,22 @@ class: center, middle
 ## Technical setup of PostgreSQL
 
 ---
+
+### Creation of a Database
+A database with the name "NumbeoR" in PostgreSQL has to be created manually by the user. 
+
+.center[
+<img src="pics/databaseCreationPostgreSQL.PNG" width="800" height="300" />
+]
+
+---
 class: center, middle
 ### Establishing Connection to PostgreSQL
 
 ---
+Every project member created a configFile with a personalised path to the (local) NumbeoR folder and password for PostgreSQL.
+
+Now we are loading this configFile:
 ```{r echo=TRUE}
 # load configfile
 configFile <- fromJSON(file="configFile.json")
@@ -163,7 +173,7 @@ path <- configFile[1]
 ```
 
 
-
+Here we establish the connection to the individual PostgreSQL datatabase with the name "NumbeoR"
 ```{r echo=TRUE}
 pw = configFile[2]
 
@@ -183,21 +193,11 @@ rm(pw)
 
 ---
 
-### Creation of a Database
-A database with the name "NumbeoR" in PostgreSQL has to be created manually by the user. 
-
-.center[
-<img src="pics/databaseCreationPostgreSQL.PNG" width="800" height="300" />
-]
-
----
-
 ### Creation of Tables
 
-```{sql connection=con}
+```{sql connection=con, include=FALSE}
 DROP Table cost_of_living, crime, health_care, pollution, property_investment, traffic
 ```
-
 
 Six different tables need to be created:
 
@@ -219,21 +219,27 @@ CREATE TABLE crime (
     "Crime Index" numeric,              
     "Safety Index" numeric
 );
+```
 
+```{sql echo=TRUE, connection=con}
 CREATE TABLE health_care (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
     "Health Care Index" numeric,              
     "Health CareExp. Index" numeric                        
 );
+```
 
+```{sql echo=TRUE, connection=con}
 CREATE TABLE pollution (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
     "Pollution Index" numeric,              
     "Exp Pollution Index" numeric                       
 );
+```
 
+```{sql echo=TRUE, connection=con}
 CREATE TABLE property_investment (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
@@ -245,7 +251,9 @@ CREATE TABLE property_investment (
     "Mortgage As A Percentage Of Income" numeric,                   
     "Affordability Index" numeric                      
 );
+```
 
+```{sql echo=TRUE, connection=con}
 CREATE TABLE traffic (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
@@ -255,13 +263,10 @@ CREATE TABLE traffic (
     "Inefficiency Index" numeric,                   
     "CO2 Emission Index" numeric                        
 );
-
-
 ```
 
 ---
 class: center, middle
-
 ## Data Import to PostgreSQL
 
 ---
@@ -275,7 +280,11 @@ pathToTableJson <- paste0(path, "daten/tableNamesImport.json")
 # reeding the dataImport and tableNames json
 my_files <- fromJSON(file = pathToDataJson)
 my_tables <- fromJSON(file= pathToTableJson)
+```
 
+---
+
+```{r echo=TRUE}
 # creating lists
 my_data <- list()
 df_temp_my_data <- list()
@@ -363,6 +372,7 @@ Joining the data to one master dataframe with a *nested full_join* function
 
 ```{r}
 df_master <- full_join(full_join(full_join(full_join(full_join(df_cost_of_living_postgres, df_crime_postgres, by = c("Country", "Year")),df_health_care_postgres, by = c("Country", "Year")), df_pollution_postgres, by = c("Country", "Year")), df_property_investment_postgres, by = c("Country", "Year")), df_traffic_postgres, by = c("Country", "Year"))
+df_master
 ```
 
 
@@ -371,9 +381,6 @@ df_master <- full_join(full_join(full_join(full_join(full_join(df_cost_of_living
 
 ```
 
-```{r echo=FALSE}
-df_master
-```
 
 ---
 
@@ -385,7 +392,7 @@ class: center, middle
 
 Furthermore we would like to add the information in which continent the country is.
 
-Therefore we import a table which includes a country continent mapping.
+Therefore we import a table which includes a country-continent mapping.
 
 ```{r}
 countryContinent <- read.csv(file="https://raw.githubusercontent.com/eibrahi/NumbeoR/master/daten/CountryContinent.csv",header=TRUE, sep=";")
@@ -456,6 +463,11 @@ colnames(df_master_continent)[which(names(df_master_continent) == "Health CareEx
 colnames(df_master_continent)[which(names(df_master_continent) == "Pollution Index")] <- "Pollution"
 colnames(df_master_continent)[which(names(df_master_continent) == "Exp Pollution Index")] <- "ExpPollution"
 colnames(df_master_continent)[which(names(df_master_continent) == "Health Care Index")] <- "HealthCare"
+```
+
+---
+
+```{r}
 colnames(df_master_continent)[which(names(df_master_continent) == "Price To Income Ratio")] <- "PriceToIncome"
 colnames(df_master_continent)[which(names(df_master_continent) == "Gross Rental Yield City Centre")] <- "GrossRentalYieldCityCentre"
 colnames(df_master_continent)[which(names(df_master_continent) == "Gross Rental Yield Outside of Centre")] <- "GrossRentalYieldOutsideOfCentre"
@@ -481,10 +493,21 @@ class: center, middle
 ---
 ## General Approach
 
-* Detailed inspection of data and data structure
-* Selection of content to be used afterwards
-* Data cleansing (e.g. outlier, NAs, NaNs)
-* Final validation and verification of data set
+--
+
+- Detailed inspection of data and data structure
+
+--
+
+- Selection of content to be used afterwards
+
+--
+
+- Data cleansing (e.g. outlier, NAs, NaNs)
+
+--
+
+- Final validation and verification of data set
 
 ---
 class: center, middle
@@ -522,7 +545,7 @@ df_analysis <- select(df_master_continent, Year, Country, CostOfLiving, Rent,
 
 ---
 
-The data structure is:
+The data structure of the analysis dataframe is:
 ```{r echo=FALSE}
 glimpse(df_analysis)
 ```
@@ -534,6 +557,43 @@ class: center, middle
 
 ---
 ### Deletion of Outliers
+
+---
+First we generate a summary of all variables:
+```{r}
+summary(df_analysis)
+```
+
+---
+We see that the variable Mortgage As Percentage of Income has an outlier
+
+```{r}
+histo <- ggplot(data = df_analysis) +
+  geom_histogram(mapping = aes(MortgageAsAPercentageOfIncome),bins=30) +
+  scale_x_log10() +
+  theme_light()
+ggplotly(histo)
+```
+
+---
+Deletion of outliers:
+```{r}
+df_analysis <- df_analysis %>% 
+  mutate(MortgageAsAPercentageOfIncome = ifelse(MortgageAsAPercentageOfIncome>2000, NA, MortgageAsAPercentageOfIncome))
+
+df_master_continent <- df_master_continent %>% 
+  mutate(MortgageAsAPercentageOfIncome = ifelse(MortgageAsAPercentageOfIncome>2000, NA, MortgageAsAPercentageOfIncome))
+```
+
+---
+
+```{r}
+histo <- ggplot(data = df_analysis) +
+  geom_histogram(mapping = aes(MortgageAsAPercentageOfIncome),bins=30) +
+  scale_x_log10() +
+  theme_light()
+ggplotly(histo)
+```
 
 ---
 ### Deletion of NA Values
@@ -566,7 +626,7 @@ sum(is.na(df_analysis_clean))
 
 ---
 
-The new structure of the dataframe is:
+The new structure of the clean dataframe is:
 ```{r echo=FALSE}
 glimpse(df_analysis_clean)
 ```
@@ -585,9 +645,10 @@ class: center, middle
 In this chapter we would like to examine the data especially with respect to the Crime Index.  
 
 Here we would like to see if we can discover correlations between the Crime Index and other variables from Numbeo.  
-Furthermore we would like to see verify the hypothesis from the beginning:
+ 
+Furthermore we would like to  verify the hypothesis from the beginning:
 
-"The perceived crime of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx."
+<"The perceived criminality of people in Germany is not caused by actual criminality, but is driven by the negative news coverage of the refugee influx."
 
 ---
 class: center, middle
@@ -603,23 +664,6 @@ df_analysis_clean_2019 <- filter(df_analysis_clean, Year == 2019)
 
 ---
 ### Numeric Dataframe
-
-```{r}
-# drops <- c("Year","Country", "Continent")
-# df_master_numeric <- df_master_continent[ , !(names(df_master_continent) %in% drops)]
-# df_master_numeric <- na.omit(df_master_numeric)
-```
-
-
-```{r}
-# df_analysis_numeric <- select(df_master_numeric, 'Cost of Living Index', 'Rent Index',
-#     'Local Purchasing Power Index', 'Gross Rental Yield City Centre',
-#     'Gross Rental Yield Outside of Centre',
-#     'Mortgage As A Percentage Of Income', 'Crime Index', 'Health Care Index',
-#     'Pollution Index', 'Traffic Index', 'Time Index(in minutes)',
-#     'CO2 Emission Index')
-
-```
 
 ```{r}
 drops <- c("Year","Country", "Continent")
@@ -655,7 +699,6 @@ class: center, middle
 First, a correlation matrix will be generated with the help of the corrplot package:  
 
 ```{r echo=FALSE}
-
 corrplot(cor(df_analysis_numeric), method = "circle")
 ```
 
@@ -669,7 +712,8 @@ For the *Crime Index* we assume a correlation especially with the
 
 This will be examined in the following.
 
---- 
+---
+
 
 ### Crimes vs. Cost of Living
 
@@ -677,7 +721,7 @@ The function rcorr() [in Hmisc package] can be used to compute the significance 
 
 Here, we show the (negative) correlation of two variables *Crime Index* and *Cost of Living Index*:
 ```{r}
-corN <- rcorr(as.matrix(select(df_analysis_numeric, Crime, CostOfLiving)))
+corN <- rcorr(as.matrix(select(df_master_continent, Crime, CostOfLiving)))
 corN
 ```
 
@@ -691,7 +735,7 @@ see also [sthda](http://www.sthda.com/english/wiki/correlation-matrix-a-quick-st
 
 Here, we show the (negative) correlation of two variables *Crime Index* and *Local Purchasing Power Index*:
 ```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric, Crime, LocalPurchasingPower)))
+corN <- rcorr(as.matrix(select(df_master_continent, Crime, LocalPurchasingPower)))
 corN
 ```
 
@@ -703,10 +747,11 @@ corN
 
 Here, we show the (positive) correlation of the tow variables *Crime Index* and *CO2 Emission Index*:
 ```{r echo=FALSE}
-corN <- rcorr(as.matrix(select(df_analysis_numeric, Crime, CO2Emission)))
+corN <- rcorr(as.matrix(select(df_master_continent, Crime, CO2Emission)))
 corN
 ```
 
+**Result**: No significant correlation is existing. 
 
 ---
 
@@ -766,11 +811,23 @@ The historical number of registered crimes are from: [statista](https://de.stati
 ---
 ### Conclusion Hypothesis Testing
 
-The hypothesis can be confirmed.  
+The hypothesis can be confirmed. 
+
+--
+
 The real crime rates do not have impact on how secure people feel.  
+
+--
+
 However, the number of refugees correlates with the how people perceive the crime rate.  
+
+--
+
 The reasons behind that should be analyzed in more depth. 
-We think that the negative reportings in the media and politics lead to this results.
+
+--
+
+We think that the negative reportings in the media and politics lead to this results.  
 
 ---
 
@@ -834,10 +891,10 @@ class: center, middle
 ### Preparation Dataframe
 
 
-There are diffrent objects that can be used lateron:
+There are diffrent objects that are be used in the forecasting fpp package:
 * tsibbles
 * vectors -> timeseries
-* dataframes -> timeseries
+
 ---
 
 ### Data Transformation into Tsibble
@@ -904,8 +961,8 @@ class: center, middle
 There are many different models to analyize times series. 
 
 How do we chose the right model?
-1. Visual inspection: is there seasonality or trend?
-2. Is decomposition technique additive or multiplicative? (Log tranformation if required)
+1. *Visual inspection*: is there seasonality or trend?
+2. Is decomposition technique *additive* or *multiplicative*? (Log tranformation if required)
 3. Chosing the appropriate model, e.g. 
 
 Model                                  |   Seasonal?  |    Trend?    | Correlations?
@@ -920,8 +977,9 @@ ARIMA                                  |      yes     |     yes      |      yes
 4. Testing of the model
 5. Verification of the model performance
 
-according to [Data Science - Part X - Time Series Forecasting](https://www.youtube.com/watch?v=msFkHl7P28k&t=1922s) by Derek Kane
-
+.footnote[
+According to [Data Science - Part X - Time Series Forecasting](https://www.youtube.com/watch?v=msFkHl7P28k&t=1922s) by Derek Kane
+]
 ---
 
 
@@ -934,38 +992,6 @@ according to [Data Science - Part X - Time Series Forecasting](https://www.youtu
 ```{r echo=FALSE}
 autoplot(tsibble_Germany,Crime, col="black") +
     labs(title = "Crime Index Germany", subtitle = "Years 2012-2019") +
-    xlab("Year")
-
-```
-
----
-
-#### Cost of Living Index Germany
-```{r include=FALSE}
-autoplot(tsibble_Germany,CostOfLiving, col="red") +
-    labs(title = "Cost of Living Index Germany", subtitle = "Years 2012-2019") +
-    xlab("Year")
-
-```
-
-
----
-
-#### Health Care Index Germany
-```{r include=FALSE}
-autoplot(tsibble_Germany,HealthCare, col="orange") +
-    labs(title = "Health Care Index Germany", subtitle = "Years 2012-2019") +
-    xlab("Year")
-
-```
-
----
-
-
-#### Pollution Index Germany
-```{r include=FALSE}
-autoplot(tsibble_Germany,Pollution, col="purple") +
-    labs(title = "Pollution Index Germany", subtitle = "Years 2012-2019") +
     xlab("Year")
 
 ```
@@ -1137,7 +1163,9 @@ fc_ses
 
 ---
 Optimazation of the model:
-*unknown parameters and the initial values for any exponential smoothing method can be estimated by for example minimizing the SSE
+
+No trend and seasonal component assumed. As optimization criterion the Mean Squared Error (MSE) is chosen. 
+
 ```{r}
 # Estimate parameters
 fit_ets <- tsibble_Germany %>%
@@ -1160,9 +1188,8 @@ fc_ets %>%
  In red the one-step-ahead fitted values plotted
 
 ---
-Including an (additive) trend perspective will change the forecast:
-
-*unknown parameters and the initial values for any exponential smoothing method can be estimated by for example minimizing the SSE
+Including an (additive) trend perspective will change the forecast.  
+No seasonal component assumed. As optimization criterion the Mean Squared Error (MSE) is chosen. 
 ```{r}
 # Estimate parameters
 fit_ets2 <- tsibble_Germany %>%
@@ -1187,10 +1214,10 @@ fc_ets2 %>%
 
 ### Autocorrelation  
 Autocorrelation measures the linear relationship between lagged values of a time series.
-This means we measure the relationship between: 
-y~t~ and y~t-1~
-y~t~ and y~t-2~
-y~t~ and y~t-3~
+This means we measure the relationship between:   
+y~t~ and y~t-1~  
+y~t~ and y~t-2~  
+y~t~ and y~t-3~  
 etc.
 
 
@@ -1266,8 +1293,18 @@ fit_tslm %>% forecast(h = "3 years") %>%
     ggtitle("Crime Index for Germany") + ylab("Crime Index")
 ```
 
+---
+class: center, middle
+# Overall conclusion
+
+The application of pure *data-driven models* based on historical data is not appropriate to come to conclusions how the crime index will develop in future.  
+Furthermore *domain knowledge* is required to come to conclusions about the reasons for the past increase and how to improve the situation.  
+For our topic of observation (crime index in Germany) it is **not an issue of refugees** because the the real crime rate did not worsen.  
+It is an issue on how this topic is handelded in the **media**.  
+And here the **politicians** and the **media** have room for improvement.
 
 ---
+class: center, middle
 # Dashboarding in Shiny
 
 ---
@@ -1279,22 +1316,4 @@ pathForShiny2 <- paste0(path,"daten/CleanDF.csv")
 write.csv(df_master_continent,pathForShiny1, row.names = FALSE)
 write.csv(df_analysis_clean,pathForShiny2, row.names = FALSE)
 ```
-
-
-
----
-class: center, middle
-# Overall conclusion
-
-The application of pure data-driven models based on historical data is not appropriate to come to conclusions how the crime index will develop in future.  
-Furthermore domain knowledge is required to come to conclusions about the reasons for the past increase and how to improve the situation.  
-
-
-
-
-
-```{r}
-
-```
-
 

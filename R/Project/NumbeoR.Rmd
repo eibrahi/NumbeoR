@@ -209,10 +209,9 @@ CREATE TABLE cost_of_living (
     "Rent Index" numeric,                             -- Rent Index
     "Cost of Living Plus Rent Index" numeric,   
     "Groceries Index" numeric,                   
-    "Restaurant Price Index" numeric,                  
-    "Local Purchasing Power Index" numeric                        
+    "Restaurant Price Index" numeric,
+    "Local Purchasing Power Index" numeric
 );
-
 CREATE TABLE crime (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
@@ -221,6 +220,8 @@ CREATE TABLE crime (
 );
 ```
 
+---
+class: center, middle
 ```{sql echo=TRUE, connection=con}
 CREATE TABLE health_care (
     "Year" integer,                                   -- Year
@@ -228,9 +229,6 @@ CREATE TABLE health_care (
     "Health Care Index" numeric,              
     "Health CareExp. Index" numeric                        
 );
-```
-
-```{sql echo=TRUE, connection=con}
 CREATE TABLE pollution (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
@@ -239,6 +237,8 @@ CREATE TABLE pollution (
 );
 ```
 
+---
+class: center, middle
 ```{sql echo=TRUE, connection=con}
 CREATE TABLE property_investment (
     "Year" integer,                                   -- Year
@@ -251,9 +251,6 @@ CREATE TABLE property_investment (
     "Mortgage As A Percentage Of Income" numeric,                   
     "Affordability Index" numeric                      
 );
-```
-
-```{sql echo=TRUE, connection=con}
 CREATE TABLE traffic (
     "Year" integer,                                   -- Year
     "Country" text,                                   -- Country
@@ -270,6 +267,8 @@ class: center, middle
 ## Data Import to PostgreSQL
 
 ---
+class: middle
+
 The basic activity in the beginning of the project is to read in the JSON files containing scraped data from NumbeoR, to create dataframe and finally memorizing the data into PostgreSQL.
 
 ```{r echo=TRUE}
@@ -283,7 +282,7 @@ my_tables <- fromJSON(file= pathToTableJson)
 ```
 
 ---
-
+class: center, middle
 ```{r echo=TRUE}
 # creating lists
 my_data <- list()
@@ -317,32 +316,44 @@ class: center, middle
 ---
 #### Cost of Living in Germany
 
-```{sql echo=TRUE, connection=con}
+```{sql echo=TRUE, connection=con, output.var="CostOfLivingGermany"}
 SELECT * 
   FROM cost_of_living
   WHERE "Country" = 'Germany';
 ```
 
+```{r echo=FALSE}
+knitr::kable(CostOfLivingGermany, format='html')
+```
+
 ---
 #### Countries with very high CO2 pollutions in 2019
 
-```{sql echo=TRUE, connection=con}
+```{sql echo=TRUE, connection=con, output.var="CountryCO2EmissonsTop"}
 SELECT "Country", "CO2 Emission Index"
   FROM traffic
-  WHERE "Year"=2019 AND "CO2 Emission Index" > 6000
+  WHERE "Year"=2019 AND "CO2 Emission Index" > 7500
   ORDER BY "CO2 Emission Index" DESC;
+```
+
+```{r echo=FALSE}
+knitr::kable(CountryCO2EmissonsTop, format='html')
 ```
 
 ---
 
 #### Average Crime Index from 2012 - 2019
 
-```{sql echo=TRUE, connection=con}
+```{sql echo=TRUE, connection=con, output.var="CrmeIndex"}
 SELECT "Year", AVG("Crime Index")
   FROM crime
   GROUP BY "Year"
   ORDER BY "Year" ASC;
   
+```
+
+```{r echo=FALSE}
+knitr::kable(CrmeIndex, format='html')
 ```
 
 
@@ -372,7 +383,7 @@ Joining the data to one master dataframe with a *nested full_join* function
 
 ```{r}
 df_master <- full_join(full_join(full_join(full_join(full_join(df_cost_of_living_postgres, df_crime_postgres, by = c("Country", "Year")),df_health_care_postgres, by = c("Country", "Year")), df_pollution_postgres, by = c("Country", "Year")), df_property_investment_postgres, by = c("Country", "Year")), df_traffic_postgres, by = c("Country", "Year"))
-df_master
+df_master[1:10,1:4]
 ```
 
 
@@ -404,7 +415,7 @@ colnames(countryContinent) <- c("Country", "Continent")
 Checking the data types we see that the data was defined as factors
 
 ```{r}
-glimpse(countryContinent)
+glimpse(countryContinent[1:4,])
 ```
 
 Therefore we change the data types to characters 
@@ -413,7 +424,7 @@ countryContinent[] <- lapply(countryContinent, as.character)
 ```
 
 ```{r}
-glimpse(countryContinent)
+glimpse(countryContinent[1:4,])
 ```
 
 ---
@@ -430,14 +441,16 @@ sum(is.na(df_master_continent["Continent"]))
 
 ```
 
-```{r}
+```{r include=FALSE}
 df_master_continent[rowSums(is.na(df_master_continent["Continent"])) > 0,]
 ```
+
+---
 
 For every country one contintent could be assigened.
 
 ```{r}
-glimpse(df_master_continent)
+glimpse(df_master_continent[1:2,1:10])
 ```
 
 ---
@@ -448,9 +461,14 @@ class: center, middle
 ---
 
 We will change the column names so that there are no *blanks* anymore.
+As example the code for changing the name of *Cost of Living* is shown.
 
 ```{r}
-colnames(df_master_continent)[which(names(df_master_continent) == "Cost of Living Index")] <- "CostOfLiving"
+colnames(df_master_continent)[which(names(df_master_continent) ==
+                        "Cost of Living Index")] <- "CostOfLiving"
+```
+
+```{r include=FALSE}
 colnames(df_master_continent)[which(names(df_master_continent) == "Rent Index")] <- "Rent"
 colnames(df_master_continent)[which(names(df_master_continent) == "Cost of Living Plus Rent Index")] <- "CostOfLivingPlusRent"
 colnames(df_master_continent)[which(names(df_master_continent) == "Groceries Index")] <- "Groceries"
@@ -463,11 +481,6 @@ colnames(df_master_continent)[which(names(df_master_continent) == "Health CareEx
 colnames(df_master_continent)[which(names(df_master_continent) == "Pollution Index")] <- "Pollution"
 colnames(df_master_continent)[which(names(df_master_continent) == "Exp Pollution Index")] <- "ExpPollution"
 colnames(df_master_continent)[which(names(df_master_continent) == "Health Care Index")] <- "HealthCare"
-```
-
----
-
-```{r}
 colnames(df_master_continent)[which(names(df_master_continent) == "Price To Income Ratio")] <- "PriceToIncome"
 colnames(df_master_continent)[which(names(df_master_continent) == "Gross Rental Yield City Centre")] <- "GrossRentalYieldCityCentre"
 colnames(df_master_continent)[which(names(df_master_continent) == "Gross Rental Yield Outside of Centre")] <- "GrossRentalYieldOutsideOfCentre"
@@ -480,9 +493,38 @@ colnames(df_master_continent)[which(names(df_master_continent) == "Time Index(in
 colnames(df_master_continent)[which(names(df_master_continent) == "Time Exp. Index")] <- "TimeExp"
 colnames(df_master_continent)[which(names(df_master_continent) == "Inefficiency Index")] <- "Inefficiency"
 colnames(df_master_continent)[which(names(df_master_continent) == "CO2 Emission Index")] <- "CO2Emission"
-glimpse(df_master_continent)
 ```
 
+```{r}
+glimpse(df_master_continent[1:3,])
+```
+
+---
+
+class: center, middle
+
+## Data Selection
+
+---
+
+Selection of some variables which are to be used in some of the analyses (e.g correlation analysis), storage in a analysis dataframe.
+
+```{r}
+df_analysis <- select(df_master_continent, Year, Country, CostOfLiving, Rent,
+    LocalPurchasingPower, GrossRentalYieldCityCentre,
+    GrossRentalYieldOutsideOfCentre,
+    MortgageAsAPercentageOfIncome, Crime, HealthCare,
+    Pollution, Traffic, Time,
+    CO2Emission, Continent)
+
+```
+
+---
+
+The data structure of the analysis dataframe is:
+```{r echo=FALSE}
+glimpse(df_analysis[1:3,1:5])
+```
 
 ---
 
@@ -518,37 +560,26 @@ class: center, middle
 
 A summary of dataframe structure and data types can be illustrated with the glimpse function:
 ```{r}
-glimpse(df_master_continent)
+glimpse(df_master_continent[1:3,1:5])
 ```
 
-
+---
+First we generate a summary of all variables:
+```{r}
+summary(df_analysis[,1:5])
+```
 
 ---
-
-class: center, middle
-
-## Data Selection
+```{r}
+summary(df_analysis[,6:10])
+```
 
 ---
-
-Selection of variables which are to be used in later analyses
 
 ```{r}
-df_analysis <- select(df_master_continent, Year, Country, CostOfLiving, Rent,
-    LocalPurchasingPower, GrossRentalYieldCityCentre,
-    GrossRentalYieldOutsideOfCentre,
-    MortgageAsAPercentageOfIncome, Crime, HealthCare,
-    Pollution, Traffic, Time,
-    CO2Emission, Continent)
-
+summary(df_analysis[,11:15])
 ```
 
----
-
-The data structure of the analysis dataframe is:
-```{r echo=FALSE}
-glimpse(df_analysis)
-```
 
 ---
 class: center, middle
@@ -558,13 +589,7 @@ class: center, middle
 ---
 ### Deletion of Outliers
 
----
-First we generate a summary of all variables:
-```{r}
-summary(df_analysis)
-```
 
----
 We see that the variable Mortgage As Percentage of Income has an outlier
 
 ```{r}
@@ -606,7 +631,7 @@ sum(is.na(df_analysis))
 The observations which contain at least one NA values can be identified with the following command:
 
 ```{r}
-df_analysis[rowSums(is.na(df_analysis)) > 0,]
+df_analysis[rowSums(is.na(df_analysis)) > 0,][1:4,1:5]
 ```
 
 ---
@@ -628,7 +653,7 @@ sum(is.na(df_analysis_clean))
 
 The new structure of the clean dataframe is:
 ```{r echo=FALSE}
-glimpse(df_analysis_clean)
+glimpse(df_analysis_clean[1:4,])
 ```
 
 
@@ -704,6 +729,7 @@ corrplot(cor(df_analysis_numeric), method = "circle")
 
 
 ---
+class: middle
 
 For the *Crime Index* we assume a correlation especially with the  
 * *Cost of Living Index*, 
@@ -718,8 +744,6 @@ This will be examined in the following.
 ### Crimes vs. Cost of Living
 
 The function rcorr() [in Hmisc package] can be used to compute the significance levels (p-value) for pearson or spearman correlations. It returns both the correlation coefficients and the p-value of the correlation for all possible pairs of columns in the data table.
-
-Here, we show the (negative) correlation of two variables *Crime Index* and *Cost of Living Index*:
 ```{r}
 corN <- rcorr(as.matrix(select(df_master_continent, Crime, CostOfLiving)))
 corN
@@ -764,7 +788,7 @@ class: center, middle
 ### Crime Index vs. Number of Refugees
 
 Correlation of perceived crimes and the estimated number refugees in Germany
-(number of refugeesis an estimation and is derived from accumulation of number of asylum seekers from 2012 till 2019)
+(number of refugees is an estimation and is derived from accumulation of number of asylum seekers from 2012 till 2019)
 
 ```{r}
 # Importing data for number of asylum seekers per year from CSV file (data comes from statista)
@@ -773,15 +797,20 @@ colnames(asylumSeekerGer) <- c("Year", "AsylumSeekerGermany", "AsylumSeekerGerma
 
 # Join with Dataframe for Germany
 df_corCrimeAsylumGer <- full_join(df_Germany,asylumSeekerGer,by="Year")
-
-# Correlation analysis
-corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, Crime, AsylumSeekerGermanyCum)))
-corN
+df_corCrimeAsylumGer
 ```
 
 .footnote[
 The historical number of asylum seekers are from: [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
 ]
+
+---
+```{r echo=FALSE}
+# Correlation analysis
+corN <- rcorr(as.matrix(select(df_corCrimeAsylumGer, Crime, AsylumSeekerGermanyCum)))
+corN
+```
+
 
 ---
 ### Crime Index vs. Real Crime Rates
@@ -796,7 +825,16 @@ colnames(numberCrimesGer) <- c("Year", "number_crimes")
 
 # Join with Dataframe for Germany
 df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
+df_corCrimePerRealGer
+```
 
+.footnote[
+The historical number of registered crimes are from: [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
+]
+
+---
+
+```{r echo=FALSE}
 # Correlation analysis
 corN <- rcorr(as.matrix(select(df_corCrimePerRealGer, Crime, number_crimes)))
 corN
@@ -804,12 +842,10 @@ corN
 
 **Result**: The real crime rates seem not to influence how secure people think they are. 
 
-.footnote[
-The historical number of registered crimes are from: [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
-]
-
 ---
 ### Conclusion Hypothesis Testing
+
+--
 
 The hypothesis can be confirmed. 
 
@@ -848,6 +884,8 @@ ggplotly(crime_plot_2019)
 
 ---
 ### Scatter Plot
+
+3-dimensional scatter plot with Traffic on the x-axis, Pollution on the y-axis and the Crime Index is reflected in the bubble sizes.
 
 ```{r echo=FALSE, warning=FALSE}
 crimeTrafficPollution_plot_2019 <- ggplot(df_analysis_clean_2019) +
@@ -903,11 +941,14 @@ A time series can be thought of as a list of numbers (the measurements), along w
 
 ```{r}
 tsibble_Germany <- as_tsibble(df_Germany, index=Year)
+```
+
+```{r echo=FALSE}
 class(tsibble_Germany)
 ```
 
-```{r}
-tsibble_Germany
+```{r echo=FALSE}
+tsibble_Germany[,1:5]
 
 ```
 
@@ -922,13 +963,10 @@ In order to be able to work with the partial data sets later, we split the respe
 ```{r}
 crimeGermanyVector <- df_Germany[,9]
 crimeGermanyVector
-
 costOfLivingVector <- df_Germany[,3]
 costOfLivingVector
-
 healthCareVector <- df_Germany[,11]
 healthCareVector 
-
 pollutionVector <- df_Germany[,13]
 pollutionVector
 
@@ -961,9 +999,9 @@ class: center, middle
 There are many different models to analyize times series. 
 
 How do we chose the right model?
-1. *Visual inspection*: is there seasonality or trend?
-2. Is decomposition technique *additive* or *multiplicative*? (Log tranformation if required)
-3. Chosing the appropriate model, e.g. 
+* *Visual inspection*: is there seasonality or trend?
+* Is decomposition technique *additive* or *multiplicative*? (Log tranformation if required)
+* Chosing the appropriate model, e.g. 
 
 Model                                  |   Seasonal?  |    Trend?    | Correlations?
 ---------------------------------------|--------------|--------------|--------------
@@ -974,12 +1012,13 @@ Holts Exponential Smoothing            |      no      |     yes      |      no
 Holt-Winters Exponential Smoothing     |      yes     |     yes      |      no 
 ARIMA                                  |      yes     |     yes      |      yes 
 
-4. Testing of the model
-5. Verification of the model performance
+* Testing of the model
+* Verification of the model performance
 
 .footnote[
 According to [Data Science - Part X - Time Series Forecasting](https://www.youtube.com/watch?v=msFkHl7P28k&t=1922s) by Derek Kane
 ]
+
 ---
 
 
@@ -1112,7 +1151,7 @@ autoplot(crimeGermanyPlot) +
 
 
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Set training data from 2012 to 2016
 train <- select(tsibble_Germany, Crime) %>% filter_index("2012" ~ "2016")
 # Fit the models
@@ -1169,7 +1208,7 @@ No trend and seasonal component assumed. As optimization criterion the Mean Squa
 ```{r}
 # Estimate parameters
 fit_ets <- tsibble_Germany %>%
-  model(ETS(Crime ~ error("A") + trend("N") + season("N"), opt_crit = "mse"))
+  model(ETS(Crime ~ error("A") + trend("N") + season("N"), opt_crit = "mse")) #<<
 fc_ets <- fit_ets %>%
   forecast(h = 3)
 
@@ -1179,7 +1218,7 @@ accuracy(fit_ets)
 
 ---
 
-```{r}
+```{r echo=FALSE}
 fc_ets %>%
   autoplot(tsibble_Germany) +
   geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets)) +
@@ -1193,7 +1232,7 @@ No seasonal component assumed. As optimization criterion the Mean Squared Error 
 ```{r}
 # Estimate parameters
 fit_ets2 <- tsibble_Germany %>%
-  model(ETS(Crime ~ error("A") + trend("A") + season("N"), opt_crit = "mse"))
+  model(ETS(Crime ~ error("A") + trend("A") + season("N"), opt_crit = "mse")) #<<
 fc_ets2 <- fit_ets2 %>%
   forecast(h = 3)
 
@@ -1203,7 +1242,7 @@ accuracy(fit_ets2)
 
 ---
 #### Trend forecasts
-```{r}
+```{r echo=FALSE}
 fc_ets2 %>%
   autoplot(tsibble_Germany) +
   geom_line(aes(y = .fitted, colour = "Fitted"), data = augment(fit_ets2)) +
@@ -1214,12 +1253,6 @@ fc_ets2 %>%
 
 ### Autocorrelation  
 Autocorrelation measures the linear relationship between lagged values of a time series.
-This means we measure the relationship between:   
-y~t~ and y~t-1~  
-y~t~ and y~t-2~  
-y~t~ and y~t-3~  
-etc.
-
 
 ```{r echo=FALSE}
 #lag.plot(crimeGermanyTS,lags=7,do.lines=FALSE) # Variante 1
@@ -1227,7 +1260,7 @@ etc.
 tsibble_Germany %>%  gg_lag(Crime, geom="point")  # Variante 2
 ```
 
-The autocorrelations are the correlations associated with these scatterplots.
+The autocorrelations are the correlations associated with these scatter plots.
 The highest positiv relationship is at lags 1 and 2.
 
 ---
@@ -1235,7 +1268,7 @@ The highest positiv relationship is at lags 1 and 2.
 The autocorrelations coefficients are displayed by the autocorrelation function ggAcf function  
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # ggAcf(crimeGermanyTS) # Variante 1
 autoplot(ACF(tsibble_Germany, Crime)) # Variante 2
 
@@ -1253,12 +1286,10 @@ class: center, middle
 ---
 
 Could there exist a linearity?
-
-```{r warning=FALSE}
+```{r warning=FALSE, message=FALSE}
 tsibble_Germany %>% select(Crime) %>% 
   ggplot(aes(x=Year, y=Crime)) +
-    ylab("Crime Index)") +
-    xlab("Years") +
+    ylab("Crime Index)") + xlab("Years") +
     geom_point() +
     geom_smooth(method="lm", se=FALSE)
 ```
@@ -1271,10 +1302,11 @@ tsibble_Germany %>%
   report()
 ```
 
-Contraints for our use case:
-* In year 0 we certainly did not have a crime index of -4199
+Constraints for our use case:
+* In year 0 we certainly did not have a Crime Index of -4199
 * Furtermore, an improvement of the crime index is possible and probable over a long period leading to a non-linearity
 ---
+Now we will create a linear forecast.
 
 First we train the model with TSLM() (time series linear model).
 
@@ -1285,7 +1317,7 @@ fit_tslm <- tsibble_Germany %>%  model(trend_model = TSLM(Crime ~ trend()))
 
 
 ---
-Assuming that the linear development will continue we plot the scenario funnel
+Assuming that the linear development will continue we plot the scenario funnel.
 
 ```{r echo=FALSE}
 fit_tslm %>% forecast(h = "3 years") %>%
@@ -1309,7 +1341,7 @@ class: center, middle
 
 ---
 ## Data Export 
-The complete master dataframe and clean dataframe is export for further usage in Shiny dashboarding.
+The complete master dataframe and clean dataframe is exported for further usage in Shiny dashboarding.
 ```{r}
 pathForShiny1 <- paste0(path,"daten/MasterDF.csv")
 pathForShiny2 <- paste0(path,"daten/CleanDF.csv")
@@ -1317,3 +1349,7 @@ write.csv(df_master_continent,pathForShiny1, row.names = FALSE)
 write.csv(df_analysis_clean,pathForShiny2, row.names = FALSE)
 ```
 
+--- 
+class: center, middle
+## Shiny App
+Please open the [Shiny App](https://numbeo.shinyapps.io/NumbeoS/).

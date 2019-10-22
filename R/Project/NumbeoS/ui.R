@@ -2,27 +2,100 @@
 # This is the user-interface definition of a Shiny web application. You can
 # run the application by clicking 'Run App' above.
 #
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
-library(shiny)
-library(plotly)
 
-# Define UI for application that draws a histogram
+# UI for application that draws a scatter plot and a forcast 
+# uses a navbarPage function to create a menu
 shinyUI(fluidPage(navbarPage("NumbeoR",
                                
-                               tabPanel("Forecast analysis",
+                               
+                             # first menu "Scatter plot"
+                             tabPanel("Scatter plot",
+                                      
+                                      # Application title
+                                      titlePanel("Investigation of interdependencies between indices"),
+                                      
+                                      # Creates a layout with a sidebar and main area.
+                                      sidebarLayout(
+                                        # Creates a sidebar panel containing input controls that can in turn be passed to sidebarLayout.
+                                        sidebarPanel(
+                                          
+                                          # Input: Select the year including an animation function 
+                                          sliderInput("YearBub",
+                                                      "year:", 
+                                                      min=2012, 
+                                                      max=2019, 
+                                                      value = 2012, 
+                                                      step = 1, 
+                                                      # animation function
+                                                      animate = animationOptions(
+                                                        750, 
+                                                        loop=FALSE, 
+                                                        playButton = NULL, 
+                                                        pauseButton = NULL
+                                                      )
+                                          ),
+                                          
+                                          # Input: Select the x-axis
+                                          selectInput("xVar", 
+                                                      "x-axis", 
+                                                      c(
+                                                        "Pollution Index",
+                                                        "Crime Index", 
+                                                        "Health Care Index", 
+                                                        "Cost of Living Index",  
+                                                        "Rent Index"
+                                                      ), 
+                                                      selected = "Pollution Index" 
+                                          ), 
+                                          
+                                          # Input: Select the y-axis
+                                          selectInput("yVar", 
+                                                      "y-axis", 
+                                                      c(
+                                                        "Pollution Index",  
+                                                        "Crime Index", 
+                                                        "Health Care Index", 
+                                                        "Cost of Living Index", 
+                                                        "Rent Index"
+                                                      ),
+                                                      selected = "Crime Index"
+                                          ),
+                                          
+                                          # Input: Select the bubble size
+                                          selectInput("bubble", 
+                                                      "bubble size", 
+                                                      c(
+                                                        "Pollution Index", 
+                                                        "Crime Index", 
+                                                        "Health Care Index", 
+                                                        "Cost of Living Index", 
+                                                        "Rent Index"
+                                                      ), 
+                                                      selected = "Cost of Living Index" 
+                                          )  
+                                        ),
+                                        
+                                        # Output: show a scatter plot
+                                        mainPanel(plotlyOutput("numbPlot")
+                                        )
+                                      )
+                             ),
+                             
+                             tabPanel("Forecast",
                     
                                     # Application title
                                     titlePanel("Crime Index"),
                     
-                                    # Sidebar with a slider input for number of bins
+                                    # Creates a layout with a sidebar and main area.
                                     sidebarLayout(
-                                        sidebarPanel(
-                                            selectInput("Criterion", 
-                                                        "Chose the criterion", 
+                                     
+                                      # Creates a sidebar panel containing input controls that can in turn be passed to sidebarLayout.  
+                                      sidebarPanel(
+                                         
+                                        # Input: Select optimization criterion   
+                                        selectInput("Criterion", 
+                                                        "optimization criterion", 
                                                         choices = c(
                                                           "Log Likelihood" = "lik", 
                                                           "Mean Square Error" = "mse", 
@@ -30,26 +103,27 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                                                           "Standard deviation of residuals" = "sigma", 
                                                           "Mean Absolute Error" = "mae"), 
                                                         selected = "mse"
-                                            ),
+                                          ),
                                             
-                                            # Horizontal line ----
-                                            tags$hr(),
                                             
-                                            # Input: Select Error ----
-                                            radioButtons("error", 
-                                                         "Error",
+                                        # Horizontal line
+                                        tags$hr(),
+                                            
+                                        # Input: Select Error   
+                                        radioButtons("error", 
+                                                         "error",
                                                            choices = c(Additive = "A",
                                                                        None = "N",
                                                                        Multiplicative = "M"),
                                                            selected = "A"
                                             ),
+                                           
+                                        # Horizontal line    
+                                        tags$hr(),
                                             
-                                            # Horizontal line ----
-                                            tags$hr(),
-                                            
-                                            # Input: Select Trend ----
-                                            radioButtons("trend", 
-                                                         "Trend",
+                                        # Input: Select Trend
+                                        radioButtons("trend", 
+                                                         "trend",
                                                          choices = c(Additive = "A",
                                                                      None = "N"
                                                                      #, Multiplicative = "M"
@@ -57,12 +131,12 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                                                          selected = "N"
                                             ),
                                             
-                                            # Horizontal line ----
-                                            tags$hr(),
+                                        # Horizontal line ----
+                                        tags$hr(),
                                             
-                                            # Input: Select season ----
-                                            radioButtons("season", 
-                                                         "Season",
+                                        # Input: Select season ----
+                                        radioButtons("season", 
+                                                         "season",
                                                          choices = c(Additive = "A",
                                                                      None = "N",
                                                                      Multiplicative = "M"),
@@ -70,81 +144,12 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                                             )
                                         ),
                     
-                                        # Show a plot of the generated distribution
-                                        #mainPanel(plotlyOutput("Forecast")
-                                        mainPanel(plotOutput("Forecast")
-                                        )
-                                    )
-                                ),
-                                
-                               tabPanel("Plots",
-                                         
-                                    # Application title
-                                    titlePanel("Investigation of interrelationships between indices"),
-                                         
-                                    # Sidebar with a slider input for number of bins
-                                    sidebarLayout(
-                                        sidebarPanel(
-                                            sliderInput("YearBub",
-                                                        "Chose the year:", 
-                                                        min=2012, 
-                                                        max=2019, 
-                                                        value = 2012, 
-                                                        step = 1, 
-                                                        animate = animationOptions(
-                                                          750, 
-                                                          loop=FALSE, 
-                                                          playButton = NULL, 
-                                                          pauseButton = NULL
-                                                          )
-                                            ),
-                          
-                                            selectInput("xVar", 
-                                                        "Chose the x Variable", 
-                                                        c(
-                                                          "Pollution Index",
-                                                          "Crime Index", 
-                                                          "Health Care Index", 
-                                                          "Cost of Living Index",  
-                                                          "Rent Index"
-                                                          ), 
-                                                        selected = "Pollution Index" 
-                                            ), 
-                                        
-                                            selectInput("yVar", 
-                                                        "Chose the y Variable", 
-                                                        c(
-                                                          "Pollution Index",  
-                                                          "Crime Index", 
-                                                          "Health Care Index", 
-                                                          "Cost of Living Index", 
-                                                          "Rent Index"
-                                                          ),
-                                                        selected = "Crime Index"
-                                            ),
-                                            
-                                            selectInput("bubble", 
-                                                        "Chose the size Variable", 
-                                                        c(
-                                                          "Pollution Index", 
-                                                          "Crime Index", 
-                                                          "Health Care Index", 
-                                                          "Cost of Living Index", 
-                                                          "Rent Index"
-                                                          ), 
-                                                        selected = "Cost of Living Index" 
-                                            )  
-                                        ),
-                          
-                                        # Show a plot of the generated distribution
-                                        #mainPanel(plotOutput("numbPlot")
-                                        mainPanel(plotlyOutput("numbPlot")
-                                        )
-                                    )
-                                )
-        
-                               #,widths = c(2, 10)
-                             )
+                                      # Output: show a plot of the forcast
+                                      mainPanel(plotOutput("Forecast")
+                                      )
+                                  )
+                              )
+                    )
     )
 )
 

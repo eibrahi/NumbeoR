@@ -3,6 +3,8 @@
 # run the application by clicking 'Run App' above.
 #
 
+# used libraries
+library(plotly)     # visualizations
 
 # UI for application that draws a scatter plot and a forcast 
 # uses a navbarPage function to create a menu

@@ -785,7 +785,7 @@ class: center, middle
 
 ### Crime Index vs. Number of Refugees
 
-Correlation of perceived crimes and the estimated number refugees in Germany
+Correlation of perceived crimes and the estimated number refugees in **Germany**
 (number of refugees is an estimation and is derived from accumulation of number of asylum seekers from 2012 till 2019)
 
 ```{r}
@@ -801,6 +801,28 @@ df_corCrimeAsylumGer[1:5,13:17]
 .footnote[
 The historical number of asylum seekers are from: [statista](https://de.statista.com/statistik/daten/studie/76095/umfrage/asylantraege-insgesamt-in-deutschland-seit-1995/)
 ]
+
+---
+class: center, middle
+```{r echo=FALSE, warning=FALSE}
+ggplot(data=df_corCrimeAsylumGer) +
+  geom_line(mapping=aes(x=Year, y=Crime)) +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(title="Crime Index in Germany", subtitle="2012-2019", x="Year", y="Crimes Index")
+```
+
+---
+class: center, middle
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data=df_corCrimeAsylumGer) +
+  geom_line(mapping=aes(x=Year, y=AsylumSeekerGermany)) +
+  geom_line(mapping=aes(x=Year, y=AsylumSeekerGermanyCum)) +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(title="Asylum Seekers (per year and cumulative) in Germany", subtitle="2012-2018", x="Year", y="Asylum Seekers")
+```
 
 ---
 class: middle
@@ -832,6 +854,27 @@ df_corCrimePerRealGer[1:5,1:5]
 .footnote[
 The historical number of registered crimes are from: [statista](https://de.statista.com/statistik/daten/studie/197/umfrage/straftaten-in-deutschland-seit-1997/)
 ]
+
+---
+class: center, middle
+```{r echo=FALSE, warning=FALSE}
+ggplot(data=df_corCrimePerRealGer) +
+  geom_line(mapping=aes(x=Year, y=Crime)) +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(title="Crime Index in Germany", subtitle="2012-2019", x="Year", y="Crimes Index")
+```
+
+---
+class: center, middle
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data=df_corCrimePerRealGer) +
+  geom_line(mapping=aes(x=Year, y=number_crimes)) +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(title="Registered Number of Crimes In Germany", subtitle="2012-2018", x="Year", y="Number of Crimes")
+```
 
 ---
 class: middle
@@ -876,8 +919,8 @@ We think that the negative reportings in the media and politics lead to this res
 
 ```{r echo=FALSE}
 crime_plot_2019 <- ggplot(data=df_analysis_clean_2019, mapping=aes(x=Continent, y=Crime)) +
-                         geom_boxplot()
-                     
+                        geom_boxplot() +
+  coord_flip() 
 ggplotly(crime_plot_2019)
 ```
 
@@ -909,7 +952,7 @@ class: center, middle
 ## General 
 
 What? 
-We are going to analyse the **crime rate**.
+We are going to analyse the **Crime Rate**.
 
 What for?
 We are analyizing the crime rate for **Germany**?
@@ -1276,8 +1319,12 @@ autoplot(ACF(tsibble_Germany, Crime)) # Variante 2
 
 ---
 class: middle
-The dashed blue lines (±2/√T where T is the length of the time, in our case ±0,76) indicate whether the correlations are significantly different from zero.
-In our case no correlation is significant. 
+**Results of the Autocorrelation Analysis**
+
+The dashed blue lines (±2/√T where T is the length of the time, in our case ±0,76) indicate whether the correlations are significantly different from zero.  
+
+In our case no correlation is significant.  
+
 Time series that show no autocorrelation are called *white noise*. 
 
 ---

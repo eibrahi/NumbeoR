@@ -14,7 +14,7 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                              # first menu "Scatter plot"
                              tabPanel("Scatter plot",
                                       
-                                      # Application title
+                                      # Main title of the first page
                                       titlePanel("Investigation of interdependencies between indices"),
                                       
                                       # Creates a layout with a sidebar and main area.
@@ -84,9 +84,10 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                                       )
                              ),
                              
+                             # second menu "Forecast"
                              tabPanel("Forecast",
                     
-                                    # Application title
+                                    # Main title of the second page
                                     titlePanel("Crime Index"),
                     
                                     # Creates a layout with a sidebar and main area.
@@ -136,7 +137,7 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                                         # Horizontal line ----
                                         tags$hr(),
                                             
-                                        # Input: Select season ----
+                                        # Input: Select Season ----
                                         radioButtons("season", 
                                                          "season",
                                                          choices = c(Additive = "A",
@@ -146,7 +147,7 @@ shinyUI(fluidPage(navbarPage("NumbeoR",
                                             )
                                         ),
                     
-                                      # Output: show a plot of the forcast
+                                      # Output: show a plot of the forecast
                                       mainPanel(plotOutput("Forecast")
                                       )
                                   )

@@ -399,7 +399,7 @@ df_master <- full_join(
       df_pollution_postgres, by = c("Country", "Year")), 
     df_property_investment_postgres, by = c("Country", "Year")), 
   df_traffic_postgres, by = c("Country", "Year"))
-df_master[1:10,1:4]
+df_master[1:6,1:4]
 ```
 
 
@@ -462,10 +462,13 @@ df_master_continent[rowSums(is.na(df_master_continent["Continent"])) > 0,]
 ```
 
 ---
-
-For every country one contintent could be assigened.
+For every country one continent could be assigened.
 ```{r echo=FALSE}
-glimpse(df_master_continent[1:2,])
+glimpse(df_master_continent[1:2,1:5])
+```
+[...]
+```{r echo=FALSE}
+glimpse(df_master_continent[1:2,24:27])
 ```
 
 ---
@@ -622,6 +625,7 @@ df_master_continent <- df_master_continent %>%
 
 ---
 class: center, middle
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 histo <- ggplot(data = df_analysis) +
   geom_histogram(mapping = aes(MortgageAsAPercentageOfIncome),bins=30) +
@@ -726,7 +730,7 @@ corrplot(cor(df_analysis_numeric), method = "circle")
 class: middle
 
 For the *Crime Index* we assume a correlation especially with the  
-* *Cost of Living Index*, 
+* *Rent Index*, 
 * *Local Purchasing Power Index* and 
 * *CO2 Emission Index*.  
 
@@ -739,7 +743,7 @@ This will be examined in the following.
 
 The function rcorr() [in Hmisc package] can be used to compute the significance levels (p-value) for pearson or spearman correlations. It returns both the correlation coefficients and the p-value of the correlation for all possible pairs of columns in the data table.
 ```{r}
-corN <- rcorr(as.matrix(select(df_master_continent, Crime, CostOfLiving)))
+corN <- rcorr(as.matrix(select(df_master_continent, Crime, Rent)))
 corN
 ```
 
@@ -822,7 +826,7 @@ colnames(numberCrimesGer) <- c("Year", "number_crimes")
 
 # Join with Dataframe for Germany
 df_corCrimePerRealGer <- full_join(df_Germany,numberCrimesGer,by="Year")
-df_corCrimePerRealGer[1:5,]
+df_corCrimePerRealGer[1:5,1:5]
 ```
 
 .footnote[
